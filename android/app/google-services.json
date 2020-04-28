@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "162775728897",
+    "firebase_url": "https://afqy-app.firebaseio.com",
+    "project_id": "afqy-app",
+    "storage_bucket": "afqy-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:162775728897:android:30318af8bf53477792d100",
+        "android_client_info": {
+          "package_name": "nz.afewquietyarns.afqyapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "162775728897-n9m505ajmh95qdg8gvjh648nusg3l7e8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBOzGo24DllRDreS0SpyaZE9tPAat_-sLs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "162775728897-n9m505ajmh95qdg8gvjh648nusg3l7e8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
