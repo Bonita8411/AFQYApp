@@ -1,3 +1,4 @@
+import 'package:afqyapp/screens/authentication/auth_screen.dart';
 import 'package:afqyapp/screens/authentication/signin_screen.dart';
 import 'package:afqyapp/screens/home_screen.dart';
 import "package:flutter/material.dart";
@@ -12,7 +13,7 @@ class AuthStateListener extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.active) {
           FirebaseUser user = snapshot.data;
           if (user == null) {
-            return SignInScreen();
+            return AuthScreen();
           }
           return HomeScreen();
         } else {

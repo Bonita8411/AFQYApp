@@ -2,6 +2,10 @@ import 'package:afqyapp/services/auth_service.dart';
 import "package:flutter/material.dart";
 
 class RegisterScreen extends StatefulWidget {
+  final Function toggleSignIn;
+
+  RegisterScreen({this.toggleSignIn});
+
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
 }
@@ -79,7 +83,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 onPressed: () async {
                   //call register with email and password from AuthService
                 },
-              )
+              ),
+              SizedBox(height: 20.0),
+              FlatButton(
+                child: Text("Already registered? Sign in"),
+                onPressed: widget.toggleSignIn,
+              ),
               //The anonymous Sign in is for testing only, remove in release versions
 //                RaisedButton(
 //                  child: Text("Sign in Anonymously"),
