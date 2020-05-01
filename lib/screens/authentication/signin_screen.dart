@@ -17,6 +17,7 @@ class _SignInScreenState extends State<SignInScreen> {
   String _password;
 
   bool _loading = false;
+  String _error = "";
 
   @override
   Widget build(BuildContext context) {
@@ -71,6 +72,15 @@ class _SignInScreenState extends State<SignInScreen> {
                     },
                   ),
                   SizedBox(height: 20.0),
+                  Center(
+                    child: Text(
+                      _error,
+                      style: TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20.0),
                   RaisedButton(
                     child: Text("Sign in"),
                     onPressed: () async {
@@ -78,7 +88,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         setState(() => _loading = true);
                         AuthService.signInWithEmailAndPassword(_email, _password).catchError((error){
                           setState(() => _loading = false);
-                          print(error);
+                          _error = error;
                         });
                       }
                     },

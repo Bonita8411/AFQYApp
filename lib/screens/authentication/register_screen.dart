@@ -19,6 +19,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String _confirmPassword;
 
   bool _loading = false;
+  String _error = "";
 
   @override
   Widget build(BuildContext context) {
@@ -104,6 +105,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     },
                   ),
                   SizedBox(height: 20.0),
+                  Center(
+                    child: Text(
+                      _error,
+                      style: TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20.0),
                   RaisedButton(
                     child: Text("Register"),
                     onPressed: () async {
@@ -111,7 +121,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         setState(() => _loading = true);
                         AuthService.registerWithEmailAndPassword(_name, _email, _password).catchError((error){
                           setState(() => _loading = false);
-                          print(error);
+                          _error = error;
                         });
                       }
                     },
