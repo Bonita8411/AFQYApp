@@ -61,7 +61,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 obscureText: true,
                 onChanged: (val) {
                   setState(() {
-                    _email = val;
+                    _password = val;
                   });
                 },
               ),
@@ -81,7 +81,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
               RaisedButton(
                 child: Text("Register"),
                 onPressed: () async {
-                  //call register with email and password from AuthService
+                  print("name: " + _name);
+                  print("email: " + _email);
+//                  print("password: " + _password);
+                  AuthService.registerWithEmailAndPassword(_name, _email, _password);
                 },
               ),
               SizedBox(height: 20.0),

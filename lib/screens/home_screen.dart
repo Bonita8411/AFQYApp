@@ -13,7 +13,12 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text("Home Screen; You are logged in"),
+            Text("Home Screen"),
+            SizedBox(height: 10.0),
+            Text("Welcome: " + (AuthService.currentUser.displayName != null ? AuthService.currentUser.displayName : "Anon User")),
+            SizedBox(height: 10.0),
+            Text("User ID: " + AuthService.currentUser.uid),
+            SizedBox(height: 10.0),
             RaisedButton(
               child: Text("Logout"),
               onPressed: () {
