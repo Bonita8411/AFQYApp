@@ -48,7 +48,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   obscureText: true,
                   onChanged: (val) {
                     setState(() {
-                      _email = val;
+                      _password = val;
                     });
                   },
                 ),
