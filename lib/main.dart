@@ -1,3 +1,4 @@
+import 'package:afqyapp/screens/authentication/auth_state_listener.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -12,11 +13,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Container(
-        child: Center(
-          child: Text("AFQY App"),
-        )
-      ),
+      home: AuthStateListener(),
     );
   }
 }
