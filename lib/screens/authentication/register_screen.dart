@@ -1,5 +1,6 @@
 import 'package:afqyapp/services/auth_service.dart';
 import "package:flutter/material.dart";
+import 'package:validators/validators.dart';
 
 class RegisterScreen extends StatefulWidget {
   final Function toggleSignIn;
@@ -36,6 +37,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 decoration: InputDecoration(
                   labelText: "Full Name",
                 ),
+                validator: (val){
+                  if(val.isEmpty){
+                    return "Please supply a name";
+                  }
+                  return null;
+                },
                 onChanged: (val) {
                   setState(() {
                     _name = val;
@@ -47,6 +54,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 decoration: InputDecoration(
                   labelText: "Email",
                 ),
+                validator: (val) {
+                  if(!isEmail(val)){
+                    return "Please enter a valid email";
+                  }
+                  return null;
+                },
                 onChanged: (val) {
                   setState(() {
                     _email = val;
@@ -59,6 +72,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   labelText: "Password",
                 ),
                 obscureText: true,
+                validator: (val) {
+                  if(val.isEmpty){
+                    return "Please supply a password";
+                  }else if(_password != _confirmPassword){
+                    return "Passwords don't match";
+                  }
+                  return null;
+                },
                 onChanged: (val) {
                   setState(() {
                     _password = val;
@@ -81,10 +102,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
               RaisedButton(
                 child: Text("Register"),
                 onPressed: () async {
-                  print("name: " + _name);
-                  print("email: " + _email);
-//                  print("password: " + _password);
-                  AuthService.registerWithEmailAndPassword(_name, _email, _password);
+                  if(_formKey.currentState.validate()){
+                    AuthService.registerWithEmailAndPassword(_name, _email, _password);
+                  }
                 },
               ),
               SizedBox(height: 20.0),

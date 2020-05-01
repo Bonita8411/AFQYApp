@@ -15,8 +15,6 @@ class HomeScreen extends StatelessWidget {
           children: <Widget>[
             Text("Home Screen"),
             SizedBox(height: 10.0),
-            Text("Welcome: " + (AuthService.currentUser.displayName != null ? AuthService.currentUser.displayName : "Anon User")),
-            SizedBox(height: 10.0),
             Text("User ID: " + AuthService.currentUser.uid),
             SizedBox(height: 10.0),
             RaisedButton(

@@ -18,7 +18,7 @@ class AuthService{
     UserUpdateInfo updateInfo = UserUpdateInfo();
     updateInfo.displayName = name;
     user.updateProfile(updateInfo);
-
+    user.reload();
     return user;
   }
 

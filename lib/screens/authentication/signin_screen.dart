@@ -1,5 +1,6 @@
 import 'package:afqyapp/services/auth_service.dart';
 import "package:flutter/material.dart";
+import 'package:validators/validators.dart';
 
 class SignInScreen extends StatefulWidget {
   final Function toggleSignIn;
@@ -34,6 +35,12 @@ class _SignInScreenState extends State<SignInScreen> {
                  decoration: InputDecoration(
                    labelText: "Email",
                  ),
+                  validator: (val) {
+                    if(!isEmail(val)){
+                      return "Please enter a valid email";
+                    }
+                    return null;
+                  },
                   onChanged: (val) {
                     setState(() {
                       _email = val;
@@ -46,6 +53,12 @@ class _SignInScreenState extends State<SignInScreen> {
                     labelText: "Password",
                   ),
                   obscureText: true,
+                  validator: (val) {
+                    if(val.isEmpty){
+                      return "Please supply a password";
+                    }
+                    return null;
+                  },
                   onChanged: (val) {
                     setState(() {
                       _password = val;
@@ -56,7 +69,9 @@ class _SignInScreenState extends State<SignInScreen> {
                 RaisedButton(
                   child: Text("Sign in"),
                   onPressed: () async {
-                    AuthService.signInWithEmailAndPassword(_email, _password);
+                    if(_formKey.currentState.validate()){
+                      AuthService.signInWithEmailAndPassword(_email, _password);
+                    }
                   },
                 ),
                 SizedBox(height: 20.0),
