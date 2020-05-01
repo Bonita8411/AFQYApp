@@ -1,17 +1,25 @@
-import 'package:afqyapp/services/auth_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
+import 'Home.dart';
+import 'Event.dart';
+import 'Messages.dart';
+import 'Profile.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return HomeScreenState();
+    return _HomeScreenState();
   }
 }
 
-class HomeScreenState extends State<HomeScreen>{
+class _HomeScreenState extends State<HomeScreen>{
   int _currentIndex = 0;
+  final _pageOptions = [
+    Home(),
+    Event(),
+    Messages(),
+    Profile()
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -20,30 +28,12 @@ class HomeScreenState extends State<HomeScreen>{
         backgroundColor: Colors.red[900],
         title: Text("AFQY App"),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text("Home Screen"),
-            SizedBox(height: 10.0),
-            Text("User ID: " + AuthService.currentUser.uid),
-            SizedBox(height: 10.0),
-            RaisedButton(
-              child: Text("Logout"),
-              onPressed: () {
-                AuthService.signOut().catchError((error) {
-                  print(error);
-                });
-              },
-            )
-          ]
-        ),
-      ),
+      body: _pageOptions[_currentIndex],
       bottomNavigationBar: new Theme(
         data: Theme.of(context).copyWith(
           primaryColor: Colors.red[900],
           textTheme: Theme.of(context).textTheme.copyWith(caption: new TextStyle(color:Colors.grey[600]))),
-        child:       BottomNavigationBar(
+        child: BottomNavigationBar(
           currentIndex: _currentIndex,
           type: BottomNavigationBarType.fixed,
 
