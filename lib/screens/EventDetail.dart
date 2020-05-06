@@ -11,7 +11,7 @@ class EventDetail extends StatelessWidget {
   _launchURL(String url) async {
     final _url = event.url;
     if (await canLaunch(_url)) {
-      await launch(_url, forceSafariVC: true, forceWebView: true);
+      await launch(_url);
     } else{
       throw 'Could not launch $_url';
     }
