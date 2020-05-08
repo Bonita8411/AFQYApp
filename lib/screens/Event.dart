@@ -18,7 +18,7 @@ class _EventState extends State<Event> {
   Future<List<EventbriteEvent>> futureEvents;
 
   Future<List<EventbriteEvent>> getData() async {
-    http.Response response = await http.get('https://www.eventbriteapi.com/v3/organizations/444403409470/events/?token=PKK2ODAKPV7VZ7TOLK6R&expand=venue');
+    http.Response response = await http.get('https://www.eventbriteapi.com/v3/organizations/47604957273/events/?token=OYFDYJB7SMZ2VFQG5CO6&expand=venue&order_by=start_asc');
 
     if (response.statusCode == 200) {
       List<EventbriteEvent> eventList = new List<EventbriteEvent>();
