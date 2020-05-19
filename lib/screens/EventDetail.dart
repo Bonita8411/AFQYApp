@@ -21,19 +21,22 @@ class EventDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Column(
-          children: <Widget>[
-            Text(event.description),
-            Container(
-              child: Text(event.url),
-            ),
-            RaisedButton(
-              child: Text("Purchase Ticket"),
-              onPressed: () {
-                _launchURL(event.url);
-              },
-            )
-          ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 15.0),
+          child: ListView(
+            children: <Widget>[
+              Text(event.description),
+              Container(
+                child: Text(event.url),
+              ),
+              RaisedButton(
+                child: Text("Purchase Ticket"),
+                onPressed: () {
+                  _launchURL(event.url);
+                },
+              )
+            ],
+          ),
         ),
       ),
       appBar: AppBar(
