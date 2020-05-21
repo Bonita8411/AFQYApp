@@ -59,7 +59,7 @@ class _ProfileState extends State <Profile> {
                             height: 180.0,
                             child: (_image!= null)?
                             Image.file(_image,
-                              fit:BoxFit.none,
+                              fit:BoxFit.scaleDown,
                             ): Image.network(
                               "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRou7yE3EGHGj-sIHZ4jW7E0APXe2WRDVFeOs00mA_97tk32rzq&usqp=CAU",
                             fit:BoxFit.fill,
