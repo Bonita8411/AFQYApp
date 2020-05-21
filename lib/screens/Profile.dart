@@ -4,6 +4,7 @@ import "package:image_picker/image_picker.dart";
 import "package:firebase_storage/firebase_storage.dart";
 import "package:path/path.dart";
 import "dart:io";
+import "package:afqyapp/services/auth_service.dart";
 
 class Profile extends StatefulWidget {
   @override
@@ -41,7 +42,7 @@ class _ProfileState extends State <Profile> {
     return Scaffold(
         body: Builder(
           builder: (context)=> Container (
-            child: Column(
+              child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 SizedBox(height: 20.0),
@@ -91,6 +92,34 @@ class _ProfileState extends State <Profile> {
                           uploadImage(context);
                         },
                       ),
+                    ),
+                  ],
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      child: Text("Name: " + AuthService.currentUser.uid),
+                      color: Colors.blueGrey,
+                      padding: EdgeInsets.all(20),
+                      margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                    ),
+                    Container(
+                      child: TextField(
+                        decoration: InputDecoration(
+                          labelText: 'Tell us about yourself'
+                        ),
+                      ),
+                      color: Colors.white,
+                    ),
+                    Container(
+                      child: Text('Interests',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontSize: 30,
+                      )),
+                      margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
                     ),
                   ],
                 ),
