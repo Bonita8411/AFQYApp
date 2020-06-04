@@ -1,4 +1,3 @@
-
 import 'package:afqyapp/models/Eventbrite_event.dart';
 import 'package:afqyapp/services/eventbrite_service.dart';
 import 'package:flutter/material.dart';
@@ -14,11 +13,24 @@ class Event extends StatefulWidget {
 }
 
 class _EventState extends State<Event> {
+  Future<List<EventbriteEvent>> _eventList;
+
+  @override
+  void initState() {
+    super.initState();
+    _eventList = EventbriteService.getEvents();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return RefreshIndicator(
+      onRefresh: () async {
+        setState(() {
+          _eventList = EventbriteService.refreshEvents();
+        });
+      },
         child: FutureBuilder<List<EventbriteEvent>>(
-      future: EventbriteService.getEvents(),
+      future: _eventList,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final events = snapshot.data;
