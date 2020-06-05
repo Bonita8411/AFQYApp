@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
 import 'Home.dart';
-import 'Event.dart';
+import 'events/Event.dart';
 import 'Messages.dart';
 import 'Profile.dart';
 

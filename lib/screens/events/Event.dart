@@ -2,7 +2,7 @@ import 'package:afqyapp/models/Eventbrite_event.dart';
 import 'package:afqyapp/services/eventbrite_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'EventDetail.dart';
+import 'package:afqyapp/screens/events/EventDetail.dart';
 
 class Event extends StatefulWidget {
   @override
