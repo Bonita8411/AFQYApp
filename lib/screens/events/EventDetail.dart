@@ -1,5 +1,6 @@
 import 'package:afqyapp/models/Eventbrite_event.dart';
 import "package:flutter/material.dart";
+import "package:url_launcher/url_launcher.dart";
 import 'package:afqyapp/screens/TabConnections.dart';
 import 'package:afqyapp/screens/TabEvent.dart';
 import 'package:afqyapp/screens/TabWho.dart';
@@ -7,7 +8,17 @@ import 'package:afqyapp/screens/TabWho.dart';
 class EventDetail extends StatelessWidget {
   final EventbriteEvent event;
 //  final String _text;
+
   EventDetail({Key key, @required this.event}) : super(key: key);
+
+  _launchURL(String url) async {
+    final _url = event.url;
+    if (await canLaunch(_url)) {
+      await launch(_url);
+    } else{
+      throw 'Could not launch $_url';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
