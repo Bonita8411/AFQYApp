@@ -1,9 +1,10 @@
 import 'package:afqyapp/models/Eventbrite_event.dart';
+import 'package:afqyapp/screens/events/TabConnections.dart';
+import 'package:afqyapp/screens/events/TabWho.dart';
 import "package:flutter/material.dart";
 import "package:url_launcher/url_launcher.dart";
-import 'package:afqyapp/screens/TabConnections.dart';
-import 'package:afqyapp/screens/TabEvent.dart';
-import 'package:afqyapp/screens/TabWho.dart';
+
+import 'TabEvent.dart';
 
 class EventDetail extends StatelessWidget {
   final EventbriteEvent event;
