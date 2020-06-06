@@ -3,7 +3,7 @@ import 'package:afqyapp/models/Eventbrite_event.dart';
 import 'package:http/http.dart' as http;
 
 class EventbriteService{
-  static String _apiKey = "OYFDYJB7SMZ2VFQG5CO6";
+  static String apiKey = "OYFDYJB7SMZ2VFQG5CO6";
   static List<EventbriteEvent> _loadedEvents = [];
 
   static Future<List<EventbriteEvent>> getEvents() async {
@@ -15,7 +15,7 @@ class EventbriteService{
 
   static Future<List<EventbriteEvent>> refreshEvents() async{
     try {
-      String eventListUrl = "https://www.eventbriteapi.com/v3/organizations/47604957273/events/?expand=venue&order_by=start_desc&status=live&token=" + _apiKey;
+      String eventListUrl = "https://www.eventbriteapi.com/v3/organizations/47604957273/events/?expand=venue&order_by=start_desc&status=live&token=" + apiKey;
       http.Response response = await http.get(eventListUrl);
       List events = json.decode(response.body)['events'];
 
@@ -41,7 +41,8 @@ class EventbriteService{
           hideStartTime: event["hide_start_date"],
           hideEndTime: event["hide_end_date"],
           url: event["url"],
-          location: location
+          location: location,
+          eventID: event['id'],
         );
         _loadedEvents.add(eventbriteEvent);
       });
