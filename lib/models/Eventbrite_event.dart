@@ -3,6 +3,7 @@ import 'package:afqyapp/models/event_attendee.dart';
 import 'package:afqyapp/services/eventbrite_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 
 class EventbriteEvent {
@@ -39,18 +40,30 @@ class EventbriteEvent {
 
   Future<List<EventAttendee>> refreshAttendees() async {
     try {
+      //Get eventbrite attendees
       String attendeeURL =
           "https://www.eventbriteapi.com/v3/events/${this.eventID}/attendees/?token=" +
               EventbriteService.apiKey;
       http.Response response = await http.get(attendeeURL);
       List eventbriteAttendees = json.decode(response.body)['attendees'];
 
+      //Get firebase attendees
+      QuerySnapshot verifiedAttendees = await Firestore.instance.collection('events').document(this.eventID).collection('attendees').getDocuments();
+
       _attendees = [];
       eventbriteAttendees.forEach((attendee) {
-        _attendees.add(new EventAttendee(
+        //Check if eventbrite ticket is in firestore
+        EventAttendee newAttendee = new EventAttendee(
             name: attendee['profile']['name'],
             ticketID: attendee['order_id'],
-            interests: []));
+            interests: []
+        );
+        verifiedAttendees.documents.forEach((verifiedAttendee) {
+          if(verifiedAttendee.documentID == attendee['order_id']){
+            newAttendee.interests = List.from(verifiedAttendee.data['interests']);
+          }
+        });
+        _attendees.add(newAttendee);
       });
 
       return _attendees;
