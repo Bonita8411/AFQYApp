@@ -34,7 +34,7 @@ class _VerifyDialogState extends State<VerifyDialog> {
                   },
                   decoration: InputDecoration(
                     labelText: "Ticket number",
-                    hintText: '1234567890',
+                    hintText: '12345678909876543210123',
                   ),
                 ),
                 SizedBox(height: 20.0,),

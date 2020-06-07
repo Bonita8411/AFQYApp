@@ -55,11 +55,11 @@ class EventbriteEvent {
         //Check if eventbrite ticket is in firestore
         EventAttendee newAttendee = new EventAttendee(
             name: attendee['profile']['name'],
-            ticketID: attendee['order_id'],
+            ticketID: attendee['barcodes'][0]['barcode'],
             interests: []
         );
         verifiedAttendees.documents.forEach((verifiedAttendee) {
-          if(verifiedAttendee.documentID == attendee['order_id']){
+          if(verifiedAttendee.documentID == attendee['barcodes'][0]['barcode']){
             newAttendee.interests = List.from(verifiedAttendee.data['interests']);
           }
         });
