@@ -79,7 +79,7 @@ class _EventState extends State<Event> {
                     );
                   });
             } else if (snapshot.hasError) {
-              return Text("${snapshot.error}");
+              return Center(child: Text("${snapshot.error}"));
             }
             return Center(child: CircularProgressIndicator());
           },

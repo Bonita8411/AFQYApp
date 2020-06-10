@@ -50,6 +50,9 @@ class EventbriteService{
       }
       return _loadedEvents;
     }catch (e) {
+      if(e == 'No Events Found'){
+        throw(e);
+      }
       throw("CONNECTION ERROR");
     }
   }
