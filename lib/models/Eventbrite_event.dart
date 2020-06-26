@@ -135,20 +135,40 @@ class EventbriteEvent {
     try{
       FirebaseUser user = await FirebaseAuth.instance.currentUser();
       QuerySnapshot snapshot = await Firestore.instance.collection('events').document(this.eventID).collection('attendees').where("uid", isEqualTo: user.uid).limit(1).getDocuments();
-      print(snapshot.documents[0].data);
+      List connectionIDs = snapshot.documents[0].data['connections'];
+      _connections = [];
+      if(_attendees == null){
+        getAttendees();
+      }
+      if(connectionIDs != null){
+        connectionIDs.forEach((connectionId) {
+          _attendees.forEach((attendee) {
+            if(connectionId == attendee.ticketID){
+              _connections.add(attendee);
+            }
+          });
+        });
+      }
+      return _connections;
     }catch(e){
-      throw('Error retrieving connections');
+      print(e);
     }
   }
   
-  Future addConnection(EventAttendee connection){
+  Future addConnection(EventAttendee connection) async{
     //add connection to array
     _connections.add(connection);
+
     //add connection to firebase
     try{
-
+      FirebaseUser user = await FirebaseAuth.instance.currentUser();
+      await Firestore.instance.collection('events').document(this.eventID).collection('attendees').
     }catch(e){
       throw('Error saving connection');
     }
+  }
+
+  Future removeConnection(EventAttendee connection){
+
   }
 }
