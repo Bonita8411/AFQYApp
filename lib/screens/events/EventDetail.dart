@@ -47,7 +47,7 @@ class EventDetail extends StatelessWidget {
               children: <Widget>[
                 TabEvent(event: event, key: key,),
                 TabWho(event: event, key: key,),
-                TabConnections(),
+                TabConnections(event: event, key: key),
               ],
             )
         )

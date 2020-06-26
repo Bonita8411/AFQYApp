@@ -18,6 +18,7 @@ class EventbriteEvent {
   final bool hideEndTime;
   final String eventID;
   List<EventAttendee> _attendees;
+  List<EventAttendee> _connections = [];
 
   EventbriteEvent(
       {this.title,
@@ -116,6 +117,35 @@ class EventbriteEvent {
       return found;
     } catch (e) {
       throw ("Error verifying ticket, please try again");
+    }
+  }
+
+  Future<List<EventAttendee>> getConnections() async{
+    if(_connections.length > 0){
+      return _connections;
+    }else{
+      return refreshConnections();
+    }
+  }
+
+  Future<List<EventAttendee>> refreshConnections() async{
+    try{
+      FirebaseUser user = await FirebaseAuth.instance.currentUser();
+      QuerySnapshot snapshot = await Firestore.instance.collection('events').document(this.eventID).collection('attendees').where("uid", isEqualTo: user.uid).limit(1).getDocuments();
+      print(snapshot.documents[0].data);
+    }catch(e){
+      throw('Error retrieving connections');
+    }
+  }
+  
+  Future addConnection(EventAttendee connection){
+    //add connection to array
+    _connections.add(connection);
+    //add connection to firebase
+    try{
+
+    }catch(e){
+      throw('Error saving connection');
     }
   }
 }
