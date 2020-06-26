@@ -18,7 +18,6 @@ class EventbriteEvent {
   final bool hideEndTime;
   final String eventID;
   List<EventAttendee> _attendees;
-  List<EventAttendee> _connections = [];
 
   EventbriteEvent(
       {this.title,
@@ -49,6 +48,7 @@ class EventbriteEvent {
       List eventbriteAttendees = json.decode(response.body)['attendees'];
 
       //Get firebase attendees
+      FirebaseUser user = await FirebaseAuth.instance.currentUser();
       QuerySnapshot verifiedAttendees = await Firestore.instance.collection('events').document(this.eventID).collection('attendees').getDocuments();
 
       _attendees = [];
@@ -60,7 +60,16 @@ class EventbriteEvent {
             interests: []
         );
         verifiedAttendees.documents.forEach((verifiedAttendee) {
-          if(verifiedAttendee.data['barcode'] == attendee['barcodes'][0]['barcode']){
+          if(verifiedAttendee.documentID == user.uid){
+            if(verifiedAttendee.data['connections'] != null){
+              verifiedAttendee.data['connections'].forEach((connectionID){
+                if(connectionID == newAttendee.ticketID){
+                  newAttendee.saved = true;
+                }
+              });
+            }
+          }
+          if(verifiedAttendee.data['barcode'] == newAttendee.ticketID){
             newAttendee.interests = List.from(verifiedAttendee.data['interests']);
             newAttendee.verified = true;
           }
@@ -121,42 +130,9 @@ class EventbriteEvent {
       throw ("Error verifying ticket, please try again");
     }
   }
-
-  Future<List<EventAttendee>> getConnections() async{
-    if(_connections.length > 0){
-      return _connections;
-    }else{
-      return refreshConnections();
-    }
-  }
-
-  Future<List<EventAttendee>> refreshConnections() async{
-    try{
-      FirebaseUser user = await FirebaseAuth.instance.currentUser();
-      DocumentSnapshot snapshot = await Firestore.instance.collection('events').document(this.eventID).collection('attendees').document(user.uid).get();
-      List connectionIDs = snapshot.data['connections'];
-      _connections = [];
-      if(_attendees == null){
-        getAttendees();
-      }
-      if(connectionIDs != null){
-        connectionIDs.forEach((connectionId) {
-          _attendees.forEach((attendee) {
-            if(connectionId == attendee.ticketID){
-              _connections.add(attendee);
-            }
-          });
-        });
-      }
-      return _connections;
-    }catch(e){
-      print(e);
-    }
-  }
   
   Future addConnection(EventAttendee connection) async{
-    //add connection to array
-    _connections.add(connection);
+    connection.saved = true;
 
     //add connection to firebase
     try{
@@ -170,7 +146,9 @@ class EventbriteEvent {
   }
 
   Future removeConnection(EventAttendee connection) async{
-    //add connection to firebase
+    connection.saved = false;
+
+    //remove connection from firebase
     try{
       FirebaseUser user = await FirebaseAuth.instance.currentUser();
       await Firestore.instance.collection('events').document(this.eventID).collection('attendees').document(user.uid).setData({

@@ -11,13 +11,13 @@ class TabConnections extends StatefulWidget {
 }
 
 class _TabConnectionsState extends State<TabConnections> {
-  Future<List<EventAttendee>> _connections;
+  Future<List<EventAttendee>> _attendees;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _connections = widget.event.refreshConnections();
+    _attendees = widget.event.getAttendees();
   }
 
   @override
@@ -26,35 +26,37 @@ class _TabConnectionsState extends State<TabConnections> {
       body: RefreshIndicator(
         onRefresh: () async {
           setState(() {
-            _connections = widget.event.refreshConnections();
+            _attendees = widget.event.refreshAttendees();
           });
         },
         child: FutureBuilder(
-          future: _connections,
+          future: _attendees,
           builder: (context, snapshot) {
-            print(snapshot.connectionState);
             if (snapshot.hasData) {
               List<EventAttendee> connectionList = snapshot.data;
               return ListView.builder(
                   itemCount: connectionList.length,
                   itemBuilder: (context, index) {
-                    return Card(
-                      child: ListTile(
-                        onTap: () {
-                          widget.event.removeConnection(connectionList[index]);
-                        },
-                        leading: Icon(
-                          Icons.account_circle,
-                          size: 56.0,
+                    if(connectionList[index].saved == true){
+                      return Card(
+                        child: ListTile(
+                            onTap: () {
+                              setState(() {
+                                widget.event.removeConnection(connectionList[index]);
+                              });
+                            },
+                            leading: Icon(
+                              Icons.account_circle,
+                              size: 56.0,
+                            ),
+                            title: Text(connectionList[index].name),
+                            subtitle:
+                            Text(connectionList[index].interests.join(", ")),
+                            trailing: Icon(Icons.star)
                         ),
-                        title: Text(connectionList[index].name),
-                        subtitle:
-                        Text(connectionList[index].interests.join(", ")),
-                        trailing: connectionList[index].saved
-                            ? Icon(Icons.star)
-                            : Icon(Icons.star_border),
-                      ),
-                    );
+                      );
+                    }
+                    return Container();
                   });
             } else if (snapshot.hasError) {
               return Center(child: Text(snapshot.error));
