@@ -40,6 +40,9 @@ class _TabConnectionsState extends State<TabConnections> {
                   itemBuilder: (context, index) {
                     return Card(
                       child: ListTile(
+                        onTap: () {
+                          widget.event.removeConnection(connectionList[index]);
+                        },
                         leading: Icon(
                           Icons.account_circle,
                           size: 56.0,
