@@ -62,6 +62,7 @@ class EventbriteEvent {
         verifiedAttendees.documents.forEach((verifiedAttendee) {
           if(verifiedAttendee.documentID == attendee['barcodes'][0]['barcode']){
             newAttendee.interests = List.from(verifiedAttendee.data['interests']);
+            newAttendee.verified = true;
           }
         });
         _attendees.add(newAttendee);
@@ -98,10 +99,12 @@ class EventbriteEvent {
       while (attendeesIterator.moveNext() && !found) {
         EventAttendee attendee = attendeesIterator.current;
 
-        if (ticketNumber == attendee.ticketID) {
+        if (!attendee.verified && ticketNumber == attendee.ticketID) {
           found = true;
           //Get current user
           FirebaseUser user = await FirebaseAuth.instance.currentUser();
+          //Check if ticket is already in firestore
+
           //Add ticket to firestore
           await Firestore.instance
               .collection('events')
