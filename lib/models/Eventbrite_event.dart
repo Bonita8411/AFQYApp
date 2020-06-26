@@ -59,7 +59,7 @@ class EventbriteEvent {
             interests: []
         );
         verifiedAttendees.documents.forEach((verifiedAttendee) {
-          if(verifiedAttendee.documentID == attendee['barcodes'][0]['barcode']){
+          if(verifiedAttendee.data['barcode'] == attendee['barcodes'][0]['barcode']){
             newAttendee.interests = List.from(verifiedAttendee.data['interests']);
             newAttendee.verified = true;
           }
@@ -76,15 +76,14 @@ class EventbriteEvent {
   Future<bool> checkTicket() async {
     try {
       FirebaseUser user = await FirebaseAuth.instance.currentUser();
-      QuerySnapshot tickets = await Firestore.instance
+      DocumentSnapshot ticket = await Firestore.instance
           .collection('events')
           .document(this.eventID)
           .collection('attendees')
-          .where("uid", isEqualTo: user.uid)
-          .limit(1)
-          .getDocuments();
-      return tickets.documents.length == 1;
+          .document(user.uid).get();
+      return (ticket.data != null && ticket.data['barcode'] != null && !ticket.data['barcode'].isEmpty);
     } catch (e) {
+      print(e);
       throw ("Error checking ticket");
     }
   }
@@ -109,9 +108,9 @@ class EventbriteEvent {
               .collection('events')
               .document(this.eventID)
               .collection('attendees')
-              .document(ticketNumber)
+              .document(user.uid)
               .setData({
-                "uid": user.uid,
+                "barcode": ticketNumber,
                 "interests": ["", "", ""]
           });
         }
