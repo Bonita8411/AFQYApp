@@ -48,6 +48,7 @@ class EventbriteEvent {
       List eventbriteAttendees = json.decode(response.body)['attendees'];
 
       //Get firebase attendees
+      FirebaseUser user = await FirebaseAuth.instance.currentUser();
       QuerySnapshot verifiedAttendees = await Firestore.instance.collection('events').document(this.eventID).collection('attendees').getDocuments();
 
       _attendees = [];
@@ -59,7 +60,16 @@ class EventbriteEvent {
             interests: []
         );
         verifiedAttendees.documents.forEach((verifiedAttendee) {
-          if(verifiedAttendee.data['barcode'] == attendee['barcodes'][0]['barcode']){
+          if(verifiedAttendee.documentID == user.uid){
+            if(verifiedAttendee.data['connections'] != null){
+              verifiedAttendee.data['connections'].forEach((connectionID){
+                if(connectionID == newAttendee.ticketID){
+                  newAttendee.saved = true;
+                }
+              });
+            }
+          }
+          if(verifiedAttendee.data['barcode'] == newAttendee.ticketID){
             newAttendee.interests = List.from(verifiedAttendee.data['interests']);
             newAttendee.verified = true;
           }
@@ -118,6 +128,34 @@ class EventbriteEvent {
       return found;
     } catch (e) {
       throw ("Error verifying ticket, please try again");
+    }
+  }
+  
+  Future addConnection(EventAttendee connection) async{
+    connection.saved = true;
+
+    //add connection to firebase
+    try{
+      FirebaseUser user = await FirebaseAuth.instance.currentUser();
+      await Firestore.instance.collection('events').document(this.eventID).collection('attendees').document(user.uid).setData({
+        "connections": FieldValue.arrayUnion([connection.ticketID])
+      }, merge: true);
+    }catch(e){
+      throw('Error saving connection');
+    }
+  }
+
+  Future removeConnection(EventAttendee connection) async{
+    connection.saved = false;
+
+    //remove connection from firebase
+    try{
+      FirebaseUser user = await FirebaseAuth.instance.currentUser();
+      await Firestore.instance.collection('events').document(this.eventID).collection('attendees').document(user.uid).setData({
+        "connections": FieldValue.arrayRemove([connection.ticketID])
+      }, merge: true);
+    }catch(e){
+      throw('Error removing connection');
     }
   }
 }

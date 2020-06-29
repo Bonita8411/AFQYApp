@@ -49,6 +49,13 @@ class _TabWhoState extends State<TabWho> {
                   itemBuilder: (context, index) {
                     return Card(
                       child: ListTile(
+                        onTap: () {
+                          setState(() {
+                            attendeeList[index].saved
+                            ? widget.event.removeConnection(attendeeList[index])
+                            : widget.event.addConnection(attendeeList[index]);
+                          });
+                        },
                         leading: Icon(
                           Icons.account_circle,
                           size: 56.0,
