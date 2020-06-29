@@ -28,11 +28,15 @@ class _EditInterestsScreenState extends State<EditInterestsScreen> {
   List<Interest> interest = Interest.getInterests();
   List<DropdownMenuItem<Interest>> dropdownMenuItems;
   Interest selectedInterest;
+  Interest selectedInterest2;
+  Interest selectedInterest3;
 
   @override
   void initState(){
     dropdownMenuItems = buildDropdownMenuItems(interest);
     selectedInterest = dropdownMenuItems[0].value;
+    selectedInterest2 = dropdownMenuItems[0].value;
+    selectedInterest3 = dropdownMenuItems[0].value;
     super.initState();
   }
 
@@ -49,9 +53,21 @@ class _EditInterestsScreenState extends State<EditInterestsScreen> {
     return items;
   }
 
-  onChangeDropdownItem(Interest selected){
+  onChangeDropdownItem1(Interest selected){
     setState(() {
       selectedInterest = selected;
+    });
+  }
+
+  onChangeDropdownItem2(Interest selected){
+    setState(() {
+      selectedInterest2 = selected;
+    });
+  }
+
+  onChangeDropdownItem3(Interest selected){
+    setState(() {
+      selectedInterest3 = selected;
     });
   }
 
@@ -70,10 +86,26 @@ class _EditInterestsScreenState extends State<EditInterestsScreen> {
               DropdownButton(
                 value: selectedInterest,
                 items: dropdownMenuItems,
-                onChanged: onChangeDropdownItem,
+                onChanged: onChangeDropdownItem1,
               ),
               SizedBox(height: 20.0,),
               Text('Chosen: ${selectedInterest.interest}'),
+              SizedBox(height: 20.0,),
+              DropdownButton(
+                value: selectedInterest2,
+                items: dropdownMenuItems,
+                onChanged: onChangeDropdownItem2,
+              ),
+              SizedBox(height: 20.0,),
+              Text('Chosen: ${selectedInterest2.interest}'),
+              SizedBox(height: 20.0,),
+              DropdownButton(
+                value: selectedInterest3,
+                items: dropdownMenuItems,
+                onChanged: onChangeDropdownItem3,
+              ),
+              SizedBox(height: 20.0,),
+              Text('Chosen: ${selectedInterest3.interest}'),
             ],
           )
       )
