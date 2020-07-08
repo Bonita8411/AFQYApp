@@ -1,22 +1,12 @@
 import 'package:afqyapp/models/Eventbrite_event.dart';
+import 'package:afqyapp/screens/web_browser.dart';
 import "package:flutter/material.dart";
 import 'package:intl/intl.dart';
-import "package:url_launcher/url_launcher.dart";
 
 class TabEvent extends StatelessWidget {
   final EventbriteEvent event;
-//  final String _text;
 
   TabEvent({Key key, @required this.event}) : super(key: key);
-
-  _launchURL(String url) async {
-    final _url = event.url;
-    if (await canLaunch(_url)) {
-      await launch(_url);
-    } else{
-      throw 'Could not launch $_url';
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +44,12 @@ class TabEvent extends StatelessWidget {
                       child: RaisedButton(
                         color: Colors.red[900],
                         onPressed: () {
-                          _launchURL(event.url);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    WebBrowser("https://www.eventbrite.co.nz/checkout-external?eid=" + event.eventID),
+                              ));
                         },
                         child: Text(
                             "Purchase Ticket",

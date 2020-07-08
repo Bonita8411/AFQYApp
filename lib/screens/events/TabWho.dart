@@ -3,7 +3,6 @@ import 'package:afqyapp/screens/events/edit_interests.dart';
 import 'package:afqyapp/screens/events/verify_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:afqyapp/models/Eventbrite_event.dart';
-import "package:url_launcher/url_launcher.dart";
 
 class TabWho extends StatefulWidget {
   final EventbriteEvent event;
