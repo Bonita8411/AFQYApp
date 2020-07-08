@@ -30,7 +30,7 @@ class TabEvent extends StatelessWidget {
           child: ListView(
             children: <Widget>[
               // Picture of event
-
+              event.imageURL != null ? Image.network(event.imageURL) : Container(),
               new Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -103,24 +103,6 @@ class TabEvent extends StatelessWidget {
                 startTime + " - " + endTime,
                 style: TextStyle(
                   color: Colors.grey[600],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: 30.0,
-                  bottom: 8.0,
-                ),
-                child: Text(
-                  "URL",
-                  style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 1.1),
-                ),
-              ),
-              Container(
-                child: Text(
-                  event.url,
-                  style: TextStyle(
-                      color: Colors.grey[600]
-                  ),
                 ),
               ),
             ],
