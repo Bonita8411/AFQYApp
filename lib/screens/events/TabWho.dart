@@ -33,10 +33,11 @@ class _TabWhoState extends State<TabWho> {
         },
       ),
       body: RefreshIndicator(
-        onRefresh: () async {
+        onRefresh: () {
           setState(() {
             _attendees = widget.event.refreshAttendees();
           });
+          return _attendees;
         },
         child: FutureBuilder(
           future: _attendees,

@@ -24,10 +24,11 @@ class _EventState extends State<Event> {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-        onRefresh: () async {
+        onRefresh: () {
           setState(() {
             _eventList = EventbriteService.refreshEvents();
           });
+          return _eventList;
         },
         child: FutureBuilder<List<EventbriteEvent>>(
           future: _eventList,
