@@ -113,16 +113,6 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                   SizedBox(height: 100.0),
                   //The anonymous Sign in is for testing only, remove in release versions
-                  RaisedButton(
-                    child: Text("DEBUG: Sign in Anonymously"),
-                    onPressed: () {
-                      setState(() => _loading = true);
-                      AuthService.signInAnon().catchError((error) {
-                        setState(() => _loading = false);
-                        print(error);
-                      });
-                    },
-                  ),
                 ],
               ),
             ),
