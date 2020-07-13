@@ -3,7 +3,6 @@ import 'package:afqyapp/models/event_attendee.dart';
 import 'package:afqyapp/services/eventbrite_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 
 class EventbriteEvent {
@@ -157,5 +156,23 @@ class EventbriteEvent {
     }catch(e){
       throw('Error removing connection');
     }
+  }
+
+  Future<List> retrieveInterests() async{
+    //Get firebase user
+      FirebaseUser user = await FirebaseAuth.instance.currentUser();
+      //Retrieve Interests
+      DocumentSnapshot documentSnapshot = await Firestore.instance.document('events/${this.eventID}/attendees/${user.uid}').get();
+      return documentSnapshot.data['interests'];
+  }
+
+  Future<List> updateInterests(List interests) async {
+    //Get firebase user
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    //Update interests
+    await Firestore.instance.document('events/${this.eventID}/attendees/${user.uid}').updateData({
+      'interests': interests,
+    });
+    return interests;
   }
 }
