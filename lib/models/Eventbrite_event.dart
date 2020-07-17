@@ -42,11 +42,21 @@ class EventbriteEvent {
   Future<List<EventAttendee>> refreshAttendees() async {
     try {
       //Get eventbrite attendees
-      String attendeeURL =
-          "https://www.eventbriteapi.com/v3/events/${this.eventID}/attendees/?token=" +
-              EventbriteService.apiKey;
-      http.Response response = await http.get(attendeeURL);
-      List eventbriteAttendees = json.decode(response.body)['attendees'];
+      bool hasMoreItems = true;
+      String continuationToken = "";
+      List eventbriteAttendees = [];
+
+      while(hasMoreItems){
+        String attendeeURL =
+            "https://www.eventbriteapi.com/v3/events/${this.eventID}/attendees/?token=" +
+                EventbriteService.apiKey
+                + "&continuation=${continuationToken}";
+        http.Response response = await http.get(attendeeURL);
+        eventbriteAttendees += json.decode(response.body)['attendees'];
+
+        hasMoreItems = json.decode(response.body)['pagination']['has_more_items'];
+        continuationToken = json.decode(response.body)['pagination']['continuation'];
+      }
 
       //Get firebase attendees
       FirebaseUser user = await FirebaseAuth.instance.currentUser();
