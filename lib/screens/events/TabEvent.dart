@@ -1,22 +1,12 @@
 import 'package:afqyapp/models/Eventbrite_event.dart';
+import 'package:afqyapp/screens/web_browser.dart';
 import "package:flutter/material.dart";
 import 'package:intl/intl.dart';
-import "package:url_launcher/url_launcher.dart";
 
 class TabEvent extends StatelessWidget {
   final EventbriteEvent event;
-//  final String _text;
 
   TabEvent({Key key, @required this.event}) : super(key: key);
-
-  _launchURL(String url) async {
-    final _url = event.url;
-    if (await canLaunch(_url)) {
-      await launch(_url);
-    } else{
-      throw 'Could not launch $_url';
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +20,7 @@ class TabEvent extends StatelessWidget {
           child: ListView(
             children: <Widget>[
               // Picture of event
-
+              event.imageURL != null ? Image.network(event.imageURL) : Container(),
               new Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -54,7 +44,12 @@ class TabEvent extends StatelessWidget {
                       child: RaisedButton(
                         color: Colors.red[900],
                         onPressed: () {
-                          _launchURL(event.url);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    WebBrowser("https://www.eventbrite.co.nz/checkout-external?eid=" + event.eventID),
+                              ));
                         },
                         child: Text(
                             "Purchase Ticket",
@@ -103,24 +98,6 @@ class TabEvent extends StatelessWidget {
                 startTime + " - " + endTime,
                 style: TextStyle(
                   color: Colors.grey[600],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: 30.0,
-                  bottom: 8.0,
-                ),
-                child: Text(
-                  "URL",
-                  style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 1.1),
-                ),
-              ),
-              Container(
-                child: Text(
-                  event.url,
-                  style: TextStyle(
-                      color: Colors.grey[600]
-                  ),
                 ),
               ),
             ],

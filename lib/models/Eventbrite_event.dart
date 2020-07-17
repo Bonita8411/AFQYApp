@@ -17,6 +17,7 @@ class EventbriteEvent {
   final bool hideEndTime;
   final String eventID;
   List<EventAttendee> _attendees;
+  String imageURL;
 
   EventbriteEvent(
       {this.title,
@@ -28,7 +29,8 @@ class EventbriteEvent {
       this.url,
       this.hideStartTime,
       this.hideEndTime,
-      this.eventID});
+      this.eventID,
+      this.imageURL});
 
   Future<List<EventAttendee>> getAttendees() async {
     if (_attendees != null) {

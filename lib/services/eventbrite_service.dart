@@ -3,7 +3,7 @@ import 'package:afqyapp/models/Eventbrite_event.dart';
 import 'package:http/http.dart' as http;
 
 class EventbriteService{
-  static bool isProduction = false;
+  static bool isProduction = true;
   static String apiKey = isProduction ? "OYFDYJB7SMZ2VFQG5CO6" : "ZGD5HQHQPTGYG3F5S2YI";
   static String _organizationId = isProduction ? "47604957273" : "429473716086";
   static List<EventbriteEvent> _loadedEvents = [];
@@ -46,6 +46,7 @@ class EventbriteService{
           url: event["url"],
           location: location,
           eventID: event['id'],
+          imageURL: event['logo'] != null ? event['logo']['url'] : null,
         );
         _loadedEvents.add(eventbriteEvent);
       });

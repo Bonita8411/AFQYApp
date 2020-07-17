@@ -1,3 +1,4 @@
+import 'package:afqyapp/screens/authentication/forgot_password_screen.dart';
 import 'package:afqyapp/services/auth_service.dart';
 import "package:flutter/material.dart";
 import 'package:validators/validators.dart';
@@ -98,18 +99,20 @@ class _SignInScreenState extends State<SignInScreen> {
                     child: Text("Not a member? Register"),
                     onPressed: widget.toggleSignIn,
                   ),
-                  SizedBox(height: 100.0),
-                  //The anonymous Sign in is for testing only, remove in release versions
-                  RaisedButton(
-                    child: Text("DEBUG: Sign in Anonymously"),
+                  SizedBox(height: 20.0),
+                  FlatButton(
+                    child: Text("Forgot Password?"),
                     onPressed: () {
-                      setState(() => _loading = true);
-                      AuthService.signInAnon().catchError((error) {
-                        setState(() => _loading = false);
-                        print(error);
-                      });
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ForgotPasswordScreen(),
+                          ));
                     },
                   ),
+                  SizedBox(height: 100.0),
+                  //The anonymous Sign in is for testing only, remove in release versions
                 ],
               ),
             ),
