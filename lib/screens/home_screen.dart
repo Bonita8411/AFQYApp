@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
 import 'Home.dart';
-import 'Event.dart';
+import 'events/Event.dart';
 import 'Messages.dart';
 import 'Profile.dart';
 
@@ -44,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen>{
             ),
             BottomNavigationBarItem(
                 icon: Icon(Icons.event),
-                title: Text('Event')
+                title: Text('Events')
             ),
             BottomNavigationBarItem(
                 icon: Icon(Icons.message),

@@ -58,4 +58,8 @@ class AuthService{
     FirebaseUser user = result.user;
     return user;
   }
+
+  static Future resetPassword(String email) async {
+    return _firebaseAuth.sendPasswordResetEmail(email: email);
+  }
 }
