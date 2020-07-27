@@ -12,9 +12,27 @@ class EditInterestsScreen extends StatefulWidget {
 class _EditInterestsScreenState extends State<EditInterestsScreen> {
   static List<String> interests = [
     '',//Empty String for if people don't want to choose an interest
-    'Cooking',
+    'Adventure',
+    'API',
     'Baking',
+    'Ballet',
+    'Blockchain',
+    'Cloud',
+    'Cooking',
+    'Development',
     'Eating',
+    'Fishing',
+    'Football',
+    'Gaming',
+    'MBaaS',
+    'Mobile Apps',
+    'PaaS',
+    'Rugby',
+    'Running',
+    'SaaS',
+    'Serverless',
+    'Snorkelling',
+    'Sports',
   ];
 
   List<DropdownMenuItem<String>> dropdownMenuItems = interests.map((interest) {
