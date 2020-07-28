@@ -48,6 +48,7 @@ class _TabWhoState extends State<TabWho> {
         onRefresh: () {
           setState(() {
             _attendees = widget.event.refreshAttendees();
+            _backgroundLoadAttendees();
           });
           return _attendees;
         },

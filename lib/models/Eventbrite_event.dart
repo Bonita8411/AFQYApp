@@ -45,6 +45,7 @@ class EventbriteEvent {
   Future<List<EventAttendee>> refreshAttendees() async{
     _attendees = [];
     continuationToken = '';
+    hasMoreAttendees = true;
     return fetchNextAttendees();
   }
 
