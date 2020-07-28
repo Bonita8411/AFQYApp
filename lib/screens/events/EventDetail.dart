@@ -27,7 +27,7 @@ class EventDetail extends StatelessWidget {
                         text: 'Who\'s Going',
                       ),
                       Tab(
-                        text: 'Connections',
+                        text: 'Favourites',
                       )
                     ]
                 )

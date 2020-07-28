@@ -41,11 +41,6 @@ class _TabConnectionsState extends State<TabConnections> {
                     if(connectionList[index].saved == true){
                       return Card(
                         child: ListTile(
-                            onTap: () {
-                              setState(() {
-                                widget.event.removeConnection(connectionList[index]);
-                              });
-                            },
                             leading: Icon(
                               Icons.account_circle,
                               size: 56.0,
@@ -53,7 +48,14 @@ class _TabConnectionsState extends State<TabConnections> {
                             title: Text(connectionList[index].name),
                             subtitle:
                             Text(connectionList[index].interests.join(", ")),
-                            trailing: Icon(Icons.star)
+                            trailing: FlatButton(
+                              child: Icon(Icons.star),
+                              onPressed: () {
+                                setState(() {
+                                  widget.event.removeConnection(connectionList[index]);
+                                });
+                              },
+                            )
                         ),
                       );
                     }
