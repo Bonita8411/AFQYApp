@@ -17,6 +17,8 @@ class EventbriteEvent {
   final bool hideEndTime;
   final String eventID;
   List<EventAttendee> _attendees;
+  String continuationToken = '';
+  bool hasMoreAttendees = true;
   String imageURL;
 
   EventbriteEvent(
@@ -36,33 +38,39 @@ class EventbriteEvent {
     if (_attendees != null) {
       return _attendees;
     }
-    return refreshAttendees();
+    _attendees = [];
+    return fetchNextAttendees();
   }
 
-  Future<List<EventAttendee>> refreshAttendees() async {
+  Future<List<EventAttendee>> refreshAttendees() async{
+    _attendees = [];
+    continuationToken = '';
+    return fetchNextAttendees();
+  }
+
+  Future<List<EventAttendee>> fetchNextAttendees() async {
+    if(!hasMoreAttendees){
+      throw('NO_MORE_ATTENDEES');
+    }
     try {
       //Get eventbrite attendees
-      bool hasMoreItems = true;
-      String continuationToken = "";
-      List eventbriteAttendees = [];
-
-      while(hasMoreItems){
         String attendeeURL =
-            "https://www.eventbriteapi.com/v3/events/${this.eventID}/attendees/?token=" +
+            "https://www.eventbriteapi.com/v3/events/${this.eventID}/attendees/?status=attending&token=" +
                 EventbriteService.apiKey
-                + "&continuation=${continuationToken}";
+                + "&continuation=${this.continuationToken}";
         http.Response response = await http.get(attendeeURL);
-        eventbriteAttendees += json.decode(response.body)['attendees'];
+      List eventbriteAttendees = json.decode(response.body)['attendees'];
 
-        hasMoreItems = json.decode(response.body)['pagination']['has_more_items'];
-        continuationToken = json.decode(response.body)['pagination']['continuation'];
-      }
+        hasMoreAttendees = json.decode(response.body)['pagination']['has_more_items'];
+        if(hasMoreAttendees) {
+          this.continuationToken =
+          json.decode(response.body)['pagination']['continuation'];
+        }
 
       //Get firebase attendees
       FirebaseUser user = await FirebaseAuth.instance.currentUser();
       QuerySnapshot verifiedAttendees = await Firestore.instance.collection('events').document(this.eventID).collection('attendees').getDocuments();
 
-      _attendees = [];
       eventbriteAttendees.forEach((attendee) {
         //Check if eventbrite ticket is in firestore
         EventAttendee newAttendee = new EventAttendee(
@@ -87,7 +95,7 @@ class EventbriteEvent {
         });
         _attendees.add(newAttendee);
       });
-
+      print(_attendees.length);
       return _attendees;
     } catch (e) {
       throw ("Error retrieving attendees");
@@ -141,7 +149,7 @@ class EventbriteEvent {
       throw ("Error verifying ticket, please try again");
     }
   }
-  
+
   Future addConnection(EventAttendee connection) async{
     connection.saved = true;
 

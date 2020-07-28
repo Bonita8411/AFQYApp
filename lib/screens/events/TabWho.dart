@@ -19,6 +19,18 @@ class _TabWhoState extends State<TabWho> {
   void initState() {
     super.initState();
     _attendees = widget.event.getAttendees();
+    _backgroundLoadAttendees();
+  }
+
+  void _backgroundLoadAttendees(){
+    widget.event.fetchNextAttendees().then((value){
+      setState(() {
+
+      });
+      _backgroundLoadAttendees();
+    }).catchError((error){
+      print(error);
+    });
   }
 
   @override
