@@ -40,7 +40,7 @@ class _TabWhoState extends State<TabWho> {
         backgroundColor: Colors.red[900],
         icon: Icon(Icons.edit),
         label: Text("Edit Interests"),
-        onPressed: (){
+        onPressed: () {
           _editInterests(context);
         },
       ),
@@ -61,24 +61,27 @@ class _TabWhoState extends State<TabWho> {
                   itemBuilder: (context, index) {
                     return Card(
                       child: ListTile(
-                        onTap: () {
-                          setState(() {
-                            attendeeList[index].saved
-                            ? widget.event.removeConnection(attendeeList[index])
-                            : widget.event.addConnection(attendeeList[index]);
-                          });
-                        },
-                        leading: Icon(
-                          Icons.account_circle,
-                          size: 56.0,
-                        ),
-                        title: Text(attendeeList[index].name),
-                        subtitle:
-                            Text(attendeeList[index].interests.join(", ")),
-                        trailing: attendeeList[index].saved
-                            ? Icon(Icons.star)
-                            : Icon(Icons.star_border),
-                      ),
+                          leading: Icon(
+                            Icons.account_circle,
+                            size: 56.0,
+                          ),
+                          title: Text(attendeeList[index].name),
+                          subtitle:
+                              Text(attendeeList[index].interests.join(", ")),
+                          trailing: FlatButton(
+                            child: attendeeList[index].saved
+                                ? Icon(Icons.star)
+                                : Icon(Icons.star_border),
+                            onPressed: () {
+                              setState(() {
+                                attendeeList[index].saved
+                                    ? widget.event
+                                        .removeConnection(attendeeList[index])
+                                    : widget.event
+                                        .addConnection(attendeeList[index]);
+                              });
+                            },
+                          )),
                     );
                   });
             } else if (snapshot.hasError) {
@@ -94,21 +97,19 @@ class _TabWhoState extends State<TabWho> {
 
   Future _editInterests(context) async {
     //Check if user is verified
-    await widget.event.checkTicket().then((verified){
-      if(verified){
+    await widget.event.checkTicket().then((verified) {
+      if (verified) {
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  EditInterestsScreen(event: widget.event),
+              builder: (context) => EditInterestsScreen(event: widget.event),
             ));
-      }else{
+      } else {
         _showVerifyDialog();
       }
-    }).catchError((error){
+    }).catchError((error) {
       Scaffold.of(context).showSnackBar(SnackBar(content: Text(error)));
     });
-
   }
 
   Future<void> _showVerifyDialog() async {
