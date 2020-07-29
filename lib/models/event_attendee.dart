@@ -1,4 +1,4 @@
-class EventAttendee with Comparable<EventAttendee>{
+class EventAttendee{
   String name;
   String ticketID;
   List<String> interests = [];
@@ -6,9 +6,4 @@ class EventAttendee with Comparable<EventAttendee>{
   bool saved;
 
   EventAttendee({this.name, this.ticketID, this.interests, this.verified = false, this.saved = false});
-
-  @override
-  int compareTo(EventAttendee other) {
-    return this.name.compareTo(other.name);
-  }
 }
