@@ -19,6 +19,9 @@ class _TabWhoState extends State<TabWho> {
   void initState() {
     super.initState();
     _attendees = widget.event.getAttendees();
+    _attendees.then((value){
+      _setPhotoURLs();
+    });
   }
 
   @override
@@ -36,6 +39,9 @@ class _TabWhoState extends State<TabWho> {
         onRefresh: () {
           setState(() {
             _attendees = widget.event.refreshAttendees();
+            _attendees.then((value){
+              _setPhotoURLs();
+            });
           });
           return _attendees;
         },
@@ -43,15 +49,24 @@ class _TabWhoState extends State<TabWho> {
           future: _attendees,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
+              //Load images in background
               List<EventAttendee> attendeeList = snapshot.data;
               return ListView.builder(
                   itemCount: attendeeList.length,
                   itemBuilder: (context, index) {
                     return Card(
                       child: ListTile(
-                          leading: Icon(
-                            Icons.account_circle,
-                            size: 56.0,
+                          leading: CircleAvatar(
+                            backgroundColor: Colors.white,
+                            child: ClipOval(
+                              child: FadeInImage.assetNetwork(
+                                  placeholder: 'assets/images/profile.png',
+                                  image: attendeeList[index].profileImage,
+                                height: 50.0,
+                                width: 50.0,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
                           title: Text(attendeeList[index].name),
                           subtitle:
@@ -107,5 +122,12 @@ class _TabWhoState extends State<TabWho> {
         return VerifyDialog(event: widget.event);
       },
     );
+  }
+
+  void _setPhotoURLs() async{
+    await widget.event.setProfileURLs();
+    setState(() {
+
+    });
   }
 }

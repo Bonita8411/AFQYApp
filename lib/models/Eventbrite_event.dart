@@ -3,6 +3,7 @@ import 'package:afqyapp/models/event_attendee.dart';
 import 'package:afqyapp/services/eventbrite_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart' as http;
 
 class EventbriteEvent {
@@ -68,7 +69,7 @@ class EventbriteEvent {
         EventAttendee newAttendee = new EventAttendee(
             name: attendee['profile']['name'],
             ticketID: attendee['barcodes'][0]['barcode'],
-            interests: []
+            interests: [],
         );
         verifiedAttendees.documents.forEach((verifiedAttendee) {
           if(verifiedAttendee.documentID == user.uid){
@@ -83,6 +84,7 @@ class EventbriteEvent {
           if(verifiedAttendee.data['barcode'] == newAttendee.ticketID){
             newAttendee.interests = List.from(verifiedAttendee.data['interests']);
             newAttendee.verified = true;
+            newAttendee.uid = verifiedAttendee.documentID;
           }
         });
         _attendees.add(newAttendee);
@@ -186,5 +188,20 @@ class EventbriteEvent {
       'interests': interests,
     });
     return interests;
+  }
+
+  Future setProfileURLs() async {
+    for(int i = 0; i < _attendees.length; i++){
+      EventAttendee attendee = _attendees[i];
+      if(attendee.verified){
+        print('profiles/' + attendee.uid);
+        try{
+          String url = await FirebaseStorage.instance.ref().child('profiles/' + attendee.uid).getDownloadURL();
+          attendee.profileImage = url;
+        }catch (e){
+          print('no photo');
+        }
+      }
+    }
   }
 }
