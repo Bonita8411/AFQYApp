@@ -5,11 +5,14 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Image.asset('assets/images/home_screen/0.jpg',
-          fit: BoxFit.cover,
+        body: Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: AssetImage(
+                  'assets/images/home_screen/0.jpg',
         ),
       ),
-    );
+    )));
   }
 }
