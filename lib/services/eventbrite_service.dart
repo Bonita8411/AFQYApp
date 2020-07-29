@@ -17,7 +17,7 @@ class EventbriteService{
 
   static Future<List<EventbriteEvent>> refreshEvents() async{
     try {
-      String eventListUrl = "https://www.eventbriteapi.com/v3/organizations/${_organizationId}/events/?expand=venue&order_by=start_desc&status=live&token=" + apiKey;
+      String eventListUrl = "https://www.eventbriteapi.com/v3/organizations/${_organizationId}/events/?expand=venue&order_by=start_asc&status=live&token=" + apiKey;
       print(eventListUrl);
       http.Response response = await http.get(eventListUrl);
       List events = json.decode(response.body)['events'];

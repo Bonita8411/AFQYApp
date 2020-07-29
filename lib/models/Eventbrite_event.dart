@@ -89,7 +89,7 @@ class EventbriteEvent {
         });
         _attendees.add(newAttendee);
       });
-
+      _attendees.sort();
       return _attendees;
     } catch (e) {
       throw ("Error retrieving attendees");

@@ -41,9 +41,17 @@ class _TabConnectionsState extends State<TabConnections> {
                     if(connectionList[index].saved == true){
                       return Card(
                         child: ListTile(
-                            leading: Icon(
-                              Icons.account_circle,
-                              size: 56.0,
+                            leading: CircleAvatar(
+                              backgroundColor: Colors.white,
+                              child: ClipOval(
+                                child: FadeInImage.assetNetwork(
+                                  placeholder: 'assets/images/profile.png',
+                                  image: connectionList[index].profileImage,
+                                  height: 50.0,
+                                  width: 50.0,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                             ),
                             title: Text(connectionList[index].name),
                             subtitle:
