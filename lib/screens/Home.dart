@@ -5,7 +5,11 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Image.asset('assets/images/home_screen/0.jpg'),
+      body: Center(
+        child: Image.asset('assets/images/home_screen/0.jpg',
+          fit: BoxFit.cover,
+        ),
+      ),
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import "package:font_awesome_flutter/font_awesome_flutter.dart";
 import "package:image_picker/image_picker.dart";
@@ -13,6 +14,7 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State <Profile> {
   File _image;
   String _uploadedFileURL;
+  Future<FirebaseUser> _user = FirebaseAuth.instance.currentUser();
 
   @override
   Widget build(BuildContext context) {
@@ -39,64 +41,80 @@ class _ProfileState extends State <Profile> {
     });
   }
     return Scaffold(
-        body: Builder(
-          builder: (context)=> Container (
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                SizedBox(height: 20.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Align(
-                      alignment: Alignment.center,
-                      child:CircleAvatar(
-                        radius: 100,
-                        backgroundColor: Colors.red[900],
-                        child: ClipOval(
-                          child: new SizedBox(
-                            width: 180.0,
-                            height: 180.0,
-                            child: (_image!= null)?
-                            Image.file(_image,
-                              fit:BoxFit.scaleDown,
-                            ): Image.network(
-                              "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRou7yE3EGHGj-sIHZ4jW7E0APXe2WRDVFeOs00mA_97tk32rzq&usqp=CAU",
-                            fit:BoxFit.fill,
+        body: FutureBuilder(
+          future: _user,
+          builder: (context, snapshot){
+            if(snapshot.hasData){
+              FirebaseUser firebaseUser = snapshot.data;
+              return Builder(
+                builder: (context)=> Container (
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(height: 20.0),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Align(
+                            alignment: Alignment.center,
+                            child:CircleAvatar(
+                              radius: 100,
+                              backgroundColor: Colors.red[900],
+                              child: ClipOval(
+                                child: new SizedBox(
+                                  width: 180.0,
+                                  height: 180.0,
+                                  child: (_image!= null)?
+                                  Image.file(_image,
+                                    fit:BoxFit.scaleDown,
+                                  ): Image.asset(
+                                    "assets/images/profile.png",
+                                    fit:BoxFit.fill,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
+//                          Padding(
+//                            padding: EdgeInsets.only(top:60.0),
+//                            child: IconButton(
+//                              icon: Icon(
+//                                FontAwesomeIcons.camera,
+//                                size: 30.0,
+//                              ),
+//                              onPressed: (){
+//                                getImage();
+//                              },
+//                            ),
+//                          ),
+//                          Padding(
+//                            padding: EdgeInsets.only(top:60.0),
+//                            child: IconButton(
+//                              icon: Icon(
+//                                FontAwesomeIcons.upload,
+//                                size: 30.0,
+//                              ),
+//                              onPressed: (){
+//                                uploadImage(context);
+//                              },
+//                            ),
+//                          ),
+                        ],
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top:60.0),
-                      child: IconButton(
-                        icon: Icon(
-                          FontAwesomeIcons.camera,
-                          size: 30.0,
-                        ),
-                        onPressed: (){
-                          getImage();
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top:60.0),
-                      child: IconButton(
-                        icon: Icon(
-                          FontAwesomeIcons.upload,
-                          size: 30.0,
-                        ),
-                        onPressed: (){
-                          uploadImage(context);
-                        },
-                      ),
-                    ),
-                  ],
+                      SizedBox(height: 25.0),
+                      Text(firebaseUser.displayName,
+                        style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
+                      )
+                    ],
+                  ),
                 ),
-              ],
-            ),
-          ),
+              );
+            }else if(snapshot.hasError){
+              return Center(child: Text('Error loading profile'));
+            }else{
+              return Center(child: CircularProgressIndicator(),);
+            }
+          }
         ),
     );
   }
