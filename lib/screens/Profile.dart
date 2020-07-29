@@ -56,6 +56,7 @@ class _ProfileState extends State<Profile> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               FirebaseUser firebaseUser = snapshot.data;
+              print(firebaseUser.uid);
               return Builder(
                 builder: (context) => Container(
                   child: Column(
