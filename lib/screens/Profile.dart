@@ -77,11 +77,13 @@ class _ProfileState extends State<Profile> {
                                           _image,
                                           fit: BoxFit.cover,
                                         )
-                                      : FadeInImage.assetNetwork(
-                                          placeholder: "assets/images/profile.png",
-                                          image: firebaseUser.photoUrl,
-                                          fit: BoxFit.cover,
-                                        ),
+                                      : firebaseUser.photoUrl != null ?
+                                  FadeInImage.assetNetwork(
+                                    placeholder: "assets/images/profile.png",
+                                    image: firebaseUser.photoUrl,
+                                    fit: BoxFit.cover,
+                                  ) :
+                                      Image.asset('assets/images/profile.png')
                                 ),
                               ),
                             ),
