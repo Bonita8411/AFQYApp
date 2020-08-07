@@ -1,4 +1,5 @@
 import 'package:afqyapp/models/event_attendee.dart';
+import 'package:afqyapp/screens/events/profile_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:afqyapp/models/Eventbrite_event.dart';
 
@@ -41,6 +42,9 @@ class _TabConnectionsState extends State<TabConnections> {
                     if(connectionList[index].saved == true){
                       return Card(
                         child: ListTile(
+                            onTap: () {
+                              _showProfileDialog(connectionList[index]);
+                            },
                             leading: CircleAvatar(
                               backgroundColor: Colors.white,
                               child: ClipOval(
@@ -77,6 +81,15 @@ class _TabConnectionsState extends State<TabConnections> {
           },
         ),
       ),
+    );
+  }
+
+  Future<void> _showProfileDialog(EventAttendee attendee) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context){
+        return ProfileDialog(attendee: attendee);
+      },
     );
   }
 }
