@@ -1,5 +1,6 @@
 import 'package:afqyapp/models/event_attendee.dart';
 import 'package:afqyapp/screens/events/edit_interests.dart';
+import 'package:afqyapp/screens/events/profile_dialog.dart';
 import 'package:afqyapp/screens/events/verify_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:afqyapp/models/Eventbrite_event.dart';
@@ -56,6 +57,9 @@ class _TabWhoState extends State<TabWho> {
                   itemBuilder: (context, index) {
                     return Card(
                       child: ListTile(
+                        onTap: () {
+                          _showProfileDialog(attendeeList[index]);
+                        },
                           leading: CircleAvatar(
                             backgroundColor: Colors.white,
                             child: ClipOval(
@@ -129,5 +133,14 @@ class _TabWhoState extends State<TabWho> {
     setState(() {
 
     });
+  }
+
+  Future<void> _showProfileDialog(EventAttendee attendee) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context){
+        return ProfileDialog(attendee: attendee);
+      },
+    );
   }
 }
