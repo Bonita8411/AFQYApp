@@ -1,5 +1,4 @@
 import 'package:afqyapp/models/event_attendee.dart';
-import 'package:afqyapp/screens/events/profile_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:afqyapp/models/Eventbrite_event.dart';
 
@@ -43,31 +42,18 @@ class _TabConnectionsState extends State<TabConnections> {
                       return Card(
                         child: ListTile(
                             onTap: () {
-                              _showProfileDialog(connectionList[index]);
+                              setState(() {
+                                widget.event.removeConnection(connectionList[index]);
+                              });
                             },
-                            leading: CircleAvatar(
-                              backgroundColor: Colors.white,
-                              child: ClipOval(
-                                child: FadeInImage.assetNetwork(
-                                  placeholder: 'assets/images/profile.png',
-                                  image: connectionList[index].profileImage,
-                                  height: 50.0,
-                                  width: 50.0,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
+                            leading: Icon(
+                              Icons.account_circle,
+                              size: 56.0,
                             ),
                             title: Text(connectionList[index].name),
                             subtitle:
                             Text(connectionList[index].interests.join(", ")),
-                            trailing: FlatButton(
-                              child: Icon(Icons.star),
-                              onPressed: () {
-                                setState(() {
-                                  widget.event.removeConnection(connectionList[index]);
-                                });
-                              },
-                            )
+                            trailing: Icon(Icons.star)
                         ),
                       );
                     }
@@ -81,15 +67,6 @@ class _TabConnectionsState extends State<TabConnections> {
           },
         ),
       ),
-    );
-  }
-
-  Future<void> _showProfileDialog(EventAttendee attendee) async {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context){
-        return ProfileDialog(attendee: attendee);
-      },
     );
   }
 }
