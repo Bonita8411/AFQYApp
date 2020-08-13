@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import "package:font_awesome_flutter/font_awesome_flutter.dart";
@@ -12,6 +13,8 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  String _getBio = "";
+  String _bioString = "";
   File _image;
   String _uploadedFileURL;
   Future<FirebaseUser> _user = FirebaseAuth.instance.currentUser();
@@ -48,6 +51,62 @@ class _ProfileState extends State<Profile> {
     });
   }
 
+
+
+ Future<String> createAlterDialog(BuildContext context) async{
+    TextEditingController myController = TextEditingController();
+    return showDialog(context: context,builder: (context){
+      return AlertDialog (
+        title: Text("Enter Your Bio"),
+        content: TextField(
+          controller: myController,
+        ),
+        actions: <Widget>[
+          Row(
+            children: <Widget>[
+              FlatButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text('Submit'),
+                onPressed: () {
+                  print(myController.text);
+                  Navigator.of(context).pop(myController.text.toString());
+                },
+              )
+            ],
+          )
+        ]
+      );
+      });
+    }
+
+Future saveBio(String bio) async{
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    Firestore.instance.collection('users').document(user.uid).setData(
+      {
+        "bio":bio,
+      },
+      merge: true,
+    );
+}
+Future getBio() async{
+  FirebaseUser user = await FirebaseAuth.instance.currentUser();
+  Firestore.instance.collection('users').document(user.uid).get().then((result){
+    setState(() {
+      _bioString = result.data == null ? '' : result.data['bio'];
+    });
+  });
+}
+  @override
+  void initState () {
+      super.initState();
+      getBio();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,78 +118,104 @@ class _ProfileState extends State<Profile> {
               print(firebaseUser.uid);
               return Builder(
                 builder: (context) => Container(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      SizedBox(height: 20.0),
-                          Align(
-                            alignment: Alignment.center,
-                            child: CircleAvatar(
-                              radius: 100,
-                              backgroundColor: Colors.red[900],
-                              child: ClipOval(
-                                child: new SizedBox(
-                                  width: 180.0,
-                                  height: 180.0,
-                                  child: (_image != null)
-                                      ? Image.file(
-                                          _image,
-                                          fit: BoxFit.cover,
-                                        )
-                                      : firebaseUser.photoUrl != null ?
-                                  FadeInImage.assetNetwork(
-                                    placeholder: "assets/images/profile.png",
-                                    image: firebaseUser.photoUrl,
-                                    fit: BoxFit.cover,
-                                  ) :
-                                      Image.asset('assets/images/profile.png')
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        SizedBox(height: 20.0),
+                            Align(
+                              alignment: Alignment.center,
+                              child: CircleAvatar(
+                                radius: 100,
+                                backgroundColor: Colors.red[900],
+                                child: ClipOval(
+                                  child: new SizedBox(
+                                    width: 180.0,
+                                    height: 180.0,
+                                    child: (_image != null)
+                                        ? Image.file(
+                                            _image,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : firebaseUser.photoUrl != null ?
+                                    FadeInImage.assetNetwork(
+                                      placeholder: "assets/images/profile.png",
+                                      image: firebaseUser.photoUrl,
+                                      fit: BoxFit.cover,
+                                    ) :
+                                        Image.asset('assets/images/profile.png')
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Column(
-                                  children: <Widget>[
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.photo,
-                                        size: 30.0,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Column(
+                                    children: <Widget>[
+                                      IconButton(
+                                        icon: Icon(
+                                          Icons.photo,
+                                          size: 30.0,
+                                        ),
+                                        onPressed: () {
+                                          getImage();
+                                        },
                                       ),
-                                      onPressed: () {
-                                        getImage();
-                                      },
-                                    ),
-                                    Text('Choose')
-                                  ],
+                                      Text('Choose')
+                                    ],
+                                  ),
+                                SizedBox(width: 15.0),
+                                Column(
+                                    children: <Widget>[
+                                      IconButton(
+                                        icon: Icon(
+                                          Icons.cloud_upload,
+                                          size: 30.0,
+                                        ),
+                                        onPressed: () {
+                                          uploadImage(context);
+                                        },
+                                      ),
+                                      Text('Upload')
+                                    ],
                                 ),
-                              SizedBox(width: 15.0),
-                              Column(
-                                  children: <Widget>[
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.cloud_upload,
-                                        size: 30.0,
-                                      ),
-                                      onPressed: () {
-                                        uploadImage(context);
-                                      },
-                                    ),
-                                    Text('Upload')
-                                  ],
-                              ),
-                            ],
-                          ),
-                          SizedBox(width: 10.0,),
+                              ],
+                            ),
+                            SizedBox(width: 10.0,),
 
-                      SizedBox(height: 25.0),
-                      Text(
-                        firebaseUser.displayName,
-                        style: TextStyle(
-                            fontSize: 30.0, fontWeight: FontWeight.bold),
-                      )
-                    ],
+                        SizedBox(height: 25.0),
+                        Text(
+                          firebaseUser.displayName,
+                          style: TextStyle(
+                              fontSize: 30.0, fontWeight: FontWeight.bold),
+                        ),
+
+                        SizedBox(height: 10.0),
+                        OutlineButton(
+                            child: Text('Edit Bio'),
+                            onPressed: () {
+                              createAlterDialog(context).then((onValue){
+                                Scaffold.of(context).showSnackBar(
+                                    SnackBar(content: Text('Your Bio has been updated')));
+                                setState(() {
+                                  if(onValue != null){
+                                    _bioString = onValue;
+                                    saveBio(_bioString);
+                                  }
+
+                                });
+                              });
+                              },
+                            ),
+                        SizedBox(height: 10.0),
+                        Text(
+                          _bioString != null ? _bioString : '',
+                          textAlign: TextAlign.left,
+                          style: TextStyle(fontSize: 18.0),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -145,3 +230,4 @@ class _ProfileState extends State<Profile> {
     );
   }
 }
+
