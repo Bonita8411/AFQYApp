@@ -96,9 +96,8 @@ Future saveBio(String bio) async{
 Future getBio() async{
   FirebaseUser user = await FirebaseAuth.instance.currentUser();
   Firestore.instance.collection('users').document(user.uid).get().then((result){
-    print(result.data['bio']);
     setState(() {
-      _getBio = result.data['bio'] ;
+      _bioString = result.data == null ? '' : result.data['bio'];
     });
   });
 }
@@ -202,14 +201,13 @@ Future getBio() async{
                                 setState(() {
                                   _bioString = onValue;
                                   saveBio(_bioString);
-                                  getBio();
                                 });
                               });
                               },
                             ),
                         SizedBox(height: 10.0),
                         Text(
-                          _getBio,
+                          _bioString,
                           textAlign: TextAlign.left,
                           style: TextStyle(fontSize: 18.0),
                         )
