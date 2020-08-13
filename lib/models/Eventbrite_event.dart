@@ -87,11 +87,15 @@ class EventbriteEvent {
             newAttendee.uid = verifiedAttendee.documentID;
           }
         });
+        if(newAttendee.uid == user.uid){
+          newAttendee.current = true;
+        }
         _attendees.add(newAttendee);
       });
-      _attendees.sort();
+      _attendees.sort((a,b) => a.compareToNameAtoZ(b));
       return _attendees;
     } catch (e) {
+      print(e);
       throw ("Error retrieving attendees");
     }
   }
@@ -194,7 +198,6 @@ class EventbriteEvent {
     for(int i = 0; i < _attendees.length; i++){
       EventAttendee attendee = _attendees[i];
       if(attendee.verified){
-        print('profiles/' + attendee.uid);
         try{
           String url = await FirebaseStorage.instance.ref().child('profiles/' + attendee.uid).getDownloadURL();
           attendee.profileImage = url;
@@ -203,5 +206,17 @@ class EventbriteEvent {
         }
       }
     }
+  }
+
+  void sortAttendeesByInterest(EventAttendee userAttendee) {
+    _attendees.sort((a,b) => a.compareToInterests(b, userAttendee));
+  }
+
+  void sortAttendeesAtoZ() {
+    _attendees.sort((a,b) => a.compareToNameAtoZ(b));
+  }
+
+  void sortAttendeesZtoA() {
+    _attendees.sort((a,b) => a.compareToNameZtoA(b));
   }
 }

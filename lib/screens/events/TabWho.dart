@@ -4,6 +4,7 @@ import 'package:afqyapp/screens/events/profile_dialog.dart';
 import 'package:afqyapp/screens/events/verify_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:afqyapp/models/Eventbrite_event.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class TabWho extends StatefulWidget {
   final EventbriteEvent event;
@@ -15,6 +16,7 @@ class TabWho extends StatefulWidget {
 
 class _TabWhoState extends State<TabWho> {
   Future<List<EventAttendee>> _attendees;
+  String sortValue = 'A-Z';
 
   @override
   void initState() {
@@ -50,47 +52,92 @@ class _TabWhoState extends State<TabWho> {
           future: _attendees,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              //Load images in background
               List<EventAttendee> attendeeList = snapshot.data;
-              return ListView.builder(
-                  itemCount: attendeeList.length,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      child: ListTile(
-                        onTap: () {
-                          _showProfileDialog(attendeeList[index]);
-                        },
-                          leading: CircleAvatar(
-                            backgroundColor: Colors.white,
-                            child: ClipOval(
-                              child: FadeInImage.assetNetwork(
-                                  placeholder: 'assets/images/profile.png',
-                                  image: attendeeList[index].profileImage,
-                                height: 50.0,
-                                width: 50.0,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          title: Text(attendeeList[index].name),
-                          subtitle:
-                              Text(attendeeList[index].interests.join(", ")),
-                          trailing: FlatButton(
-                            child: attendeeList[index].saved
-                                ? Icon(Icons.star)
-                                : Icon(Icons.star_border),
-                            onPressed: () {
-                              setState(() {
-                                attendeeList[index].saved
-                                    ? widget.event
-                                        .removeConnection(attendeeList[index])
-                                    : widget.event
-                                        .addConnection(attendeeList[index]);
-                              });
-                            },
-                          )),
-                    );
-                  });
+              EventAttendee userAttendee;
+              return Column(
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      Text('Sort'),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
+                        child: DropdownButton(
+                          icon: Icon(Icons.filter_list),
+                          value: sortValue,
+                          items: <String>['A-Z', 'Z-A', 'Common Interests']
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              sortValue = value;
+                              switch(value){
+                                case 'A-Z':
+                                  widget.event.sortAttendeesAtoZ();
+                                  break;
+                                case 'Z-A':
+                                  widget.event.sortAttendeesZtoA();
+                                  break;
+                                case 'Common Interests':
+                                  widget.event.sortAttendeesByInterest(userAttendee);
+                              }
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                        itemCount: attendeeList.length,
+                        itemBuilder: (context, index) {
+                        if(attendeeList[index].current){
+                          userAttendee = attendeeList[index];
+                        }
+                          return Card(
+                            child: ListTile(
+                              enabled: !attendeeList[index].current,
+                              onTap: () {
+                                _showProfileDialog(attendeeList[index]);
+                              },
+                                leading: CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  child: ClipOval(
+                                    child: FadeInImage.assetNetwork(
+                                        placeholder: 'assets/images/profile.png',
+                                        image: attendeeList[index].profileImage,
+                                      height: 50.0,
+                                      width: 50.0,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                title: Text(attendeeList[index].name),
+                                subtitle:
+                                    Text(attendeeList[index].interests.join(", ")),
+                                trailing: FlatButton(
+                                  child: attendeeList[index].saved
+                                      ? Icon(Icons.star)
+                                      : Icon(Icons.star_border),
+                                  onPressed: attendeeList[index].current ? null : () {
+                                    setState(() {
+                                      attendeeList[index].saved
+                                          ? widget.event
+                                              .removeConnection(attendeeList[index])
+                                          : widget.event
+                                              .addConnection(attendeeList[index]);
+                                    });
+                                  },
+                                )),
+                          );
+                        }),
+                  ),
+                ],
+              );
             } else if (snapshot.hasError) {
               return Center(child: Text(snapshot.error));
             } else {
@@ -110,7 +157,7 @@ class _TabWhoState extends State<TabWho> {
             context,
             MaterialPageRoute(
               builder: (context) => EditInterestsScreen(event: widget.event),
-            ));
+            )).then((value) => setState(() {}));
       } else {
         _showVerifyDialog();
       }
