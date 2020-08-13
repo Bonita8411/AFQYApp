@@ -3,6 +3,7 @@ import 'package:afqyapp/screens/events/edit_interests.dart';
 import 'package:afqyapp/screens/events/verify_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:afqyapp/models/Eventbrite_event.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class TabWho extends StatefulWidget {
   final EventbriteEvent event;
@@ -14,8 +15,10 @@ class TabWho extends StatefulWidget {
 
 class _TabWhoState extends State<TabWho> {
   Future<List<EventAttendee>> _attendees;
+  String sortValue = 'A-Z';
   List<EventAttendee> _searchResult = [];
   TextEditingController _txtcontroller;
+  EventAttendee userAttendee;
 
   @override
   void initState() {
@@ -64,26 +67,63 @@ class _TabWhoState extends State<TabWho> {
             child: Column(
               children: <Widget>[
                 Container(
-                  child: new Padding(
-                      padding: EdgeInsets.all(0.0),
-                      child: new Card(
-                          child: new ListTile(
-                            leading: new Icon(Icons.search),
-                            title: new TextField(
-                              controller: _txtcontroller,
-                              decoration: InputDecoration(
-                                  hintText: 'Enter name or interest', border: InputBorder.none
-                              ),
-                              onChanged: onSearchTextChanged, //method to control search action
-                            ),
-                            trailing: new IconButton(icon: new Icon(Icons.cancel),
-                                onPressed: () {
-                                  _txtcontroller.clear();
-                                  onSearchTextChanged('');
-                                }),
-                          )
-                      )
-                  ),
+                        child: new Padding(
+                            padding: EdgeInsets.all(0.0),
+                            child: new Card(
+                                child: new ListTile(
+                                  leading: new Icon(Icons.search),
+                                  title: new TextField(
+                                    controller: _txtcontroller,
+                                    decoration: InputDecoration(
+                                        hintText: 'Enter name or interest', border: InputBorder.none
+                                    ),
+                                    onChanged: onSearchTextChanged, //method to control search action
+                                  ),
+                                  trailing: new IconButton(icon: new Icon(Icons.cancel),
+                                      onPressed: () {
+                                        _txtcontroller.clear();
+                                        onSearchTextChanged('');
+                                      }),
+                                )
+                            )
+                        ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text('Sort:',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(width: 20.0),
+                    DropdownButton(
+                      value: sortValue,
+                      icon: Icon(Icons.filter_list),
+                      items: <String>['A-Z', 'Z-A', 'Common Interests']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          sortValue = value;
+                          switch(value){
+                            case 'A-Z':
+                              widget.event.sortAttendeesAtoZ();
+                              break;
+                            case 'Z-A':
+                              widget.event.sortAttendeesZtoA();
+                              break;
+                            case 'Common Interests':
+                              widget.event.sortAttendeesByInterest(userAttendee);
+                          }
+                        });
+                      },
+                    ),
+                  ],
                 ),
                 Expanded(
                   child: _searchResult.length != 0 || _txtcontroller.text.isNotEmpty ?
@@ -133,8 +173,12 @@ class _TabWhoState extends State<TabWho> {
                         return ListView.builder(
                             itemCount: attendeeList.length,
                             itemBuilder: (context, index) {
+                              if(attendeeList[index].current){
+                                userAttendee = attendeeList[index];
+                              }
                               return Card(
                                 child: ListTile(
+                                  enabled: !attendeeList[index].current,
                                     leading: CircleAvatar(
                                       backgroundColor: Colors.white,
                                       child: ClipOval(
@@ -154,7 +198,7 @@ class _TabWhoState extends State<TabWho> {
                                       child: attendeeList[index].saved
                                           ? Icon(Icons.star)
                                           : Icon(Icons.star_border),
-                                      onPressed: () {
+                                      onPressed: attendeeList[index].current ? null : () {
                                         setState(() {
                                           attendeeList[index].saved
                                               ? widget.event
@@ -214,7 +258,7 @@ class _TabWhoState extends State<TabWho> {
             context,
             MaterialPageRoute(
               builder: (context) => EditInterestsScreen(event: widget.event),
-            ));
+            )).then((value) => setState(() {}));
       } else {
         _showVerifyDialog();
       }
