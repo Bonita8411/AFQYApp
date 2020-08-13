@@ -65,7 +65,7 @@ class _ProfileState extends State<Profile> {
           Row(
             children: <Widget>[
               FlatButton(
-                child: Text('Cancle'),
+                child: Text('Cancel'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -197,17 +197,20 @@ Future getBio() async{
                             onPressed: () {
                               createAlterDialog(context).then((onValue){
                                 Scaffold.of(context).showSnackBar(
-                                    SnackBar(content: Text('Your Bio have been updated')));
+                                    SnackBar(content: Text('Your Bio has been updated')));
                                 setState(() {
-                                  _bioString = onValue;
-                                  saveBio(_bioString);
+                                  if(onValue != null){
+                                    _bioString = onValue;
+                                    saveBio(_bioString);
+                                  }
+
                                 });
                               });
                               },
                             ),
                         SizedBox(height: 10.0),
                         Text(
-                          _bioString,
+                          _bioString != null ? _bioString : '',
                           textAlign: TextAlign.left,
                           style: TextStyle(fontSize: 18.0),
                         )
