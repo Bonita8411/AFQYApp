@@ -1,6 +1,5 @@
 import 'package:afqyapp/models/event_attendee.dart';
 import 'package:afqyapp/screens/events/edit_interests.dart';
-import 'package:afqyapp/screens/events/profile_dialog.dart';
 import 'package:afqyapp/screens/events/verify_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:afqyapp/models/Eventbrite_event.dart';
@@ -15,10 +14,13 @@ class TabWho extends StatefulWidget {
 
 class _TabWhoState extends State<TabWho> {
   Future<List<EventAttendee>> _attendees;
+  List<EventAttendee> _searchResult = [];
+  TextEditingController _txtcontroller;
 
   @override
   void initState() {
     super.initState();
+    _txtcontroller = TextEditingController();
     _attendees = widget.event.getAttendees();
     _attendees.then((value){
       _setPhotoURLs();
@@ -28,6 +30,18 @@ class _TabWhoState extends State<TabWho> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+//      appBar: AppBar(
+//        backgroundColor: Colors.white,
+//        title: TextField(
+//          controller: _txtcontroller,
+//          decoration: InputDecoration(
+//            labelText: 'Search',
+//          ),
+//          cursorColor: Colors.white,
+//          style: TextStyle(color: Colors.white),
+//        ),
+//        leading: Icon(Icons.search),
+//      ),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: Colors.red[900],
         icon: Icon(Icons.edit),
@@ -37,69 +51,148 @@ class _TabWhoState extends State<TabWho> {
         },
       ),
       body: RefreshIndicator(
-        onRefresh: () {
-          setState(() {
-            _attendees = widget.event.refreshAttendees();
-            _attendees.then((value){
-              _setPhotoURLs();
+          onRefresh: () {
+            setState(() {
+              _attendees = widget.event.refreshAttendees();
+              _attendees.then((value){
+                _setPhotoURLs();
+              });
             });
-          });
-          return _attendees;
-        },
-        child: FutureBuilder(
-          future: _attendees,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              //Load images in background
-              List<EventAttendee> attendeeList = snapshot.data;
-              return ListView.builder(
-                  itemCount: attendeeList.length,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      child: ListTile(
-                        onTap: () {
-                          _showProfileDialog(attendeeList[index]);
-                        },
-                          leading: CircleAvatar(
-                            backgroundColor: Colors.white,
-                            child: ClipOval(
-                              child: FadeInImage.assetNetwork(
-                                  placeholder: 'assets/images/profile.png',
-                                  image: attendeeList[index].profileImage,
-                                height: 50.0,
-                                width: 50.0,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          title: Text(attendeeList[index].name),
-                          subtitle:
-                              Text(attendeeList[index].interests.join(", ")),
-                          trailing: FlatButton(
-                            child: attendeeList[index].saved
-                                ? Icon(Icons.star)
-                                : Icon(Icons.star_border),
-                            onPressed: () {
-                              setState(() {
-                                attendeeList[index].saved
-                                    ? widget.event
-                                        .removeConnection(attendeeList[index])
-                                    : widget.event
-                                        .addConnection(attendeeList[index]);
-                              });
-                            },
-                          )),
-                    );
-                  });
-            } else if (snapshot.hasError) {
-              return Center(child: Text(snapshot.error));
-            } else {
-              return Center(child: CircularProgressIndicator());
-            }
+            return _attendees;
           },
-        ),
+          child: Container(
+            child: Column(
+              children: <Widget>[
+                Container(
+                  child: new Padding(
+                      padding: EdgeInsets.all(0.0),
+                      child: new Card(
+                          child: new ListTile(
+                            leading: new Icon(Icons.search),
+                            title: new TextField(
+                              controller: _txtcontroller,
+                              decoration: InputDecoration(
+                                  hintText: 'Search', border: InputBorder.none
+                              ),
+                              onChanged: onSearchTextChanged, //method to control search action
+                            ),
+                            trailing: new IconButton(icon: new Icon(Icons.cancel),
+                                onPressed: () {
+                                  _txtcontroller.clear();
+                                  onSearchTextChanged('');
+                                }),
+                          )
+                      )
+                  ),
+                ),
+                Expanded(
+                  child: _searchResult.length != 0 || _txtcontroller.text.isNotEmpty ?
+                  new ListView.builder(
+                      itemCount: _searchResult.length,
+                      itemBuilder: (context, index) {
+                        return new Card(
+                          child: new ListTile(
+                              leading: CircleAvatar(
+                                backgroundColor: Colors.white,
+                                child: ClipOval(
+                                  child: FadeInImage.assetNetwork(
+                                    placeholder: 'assets/images/profile.png',
+                                    image: _searchResult[index].profileImage,
+                                    height: 50.0,
+                                    width: 50.0,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              title: Text(_searchResult[index].name),
+                              subtitle:
+                              Text(_searchResult[index].interests.join(", ")),
+                              trailing: FlatButton(
+                                child: _searchResult[index].saved
+                                    ? Icon(Icons.star)
+                                    : Icon(Icons.star_border),
+                                onPressed: () {
+                                  setState(() {
+                                    _searchResult[index].saved
+                                        ? widget.event
+                                        .removeConnection(_searchResult[index])
+                                        : widget.event
+                                        .addConnection(_searchResult[index]);
+                                  });
+                                },
+                              )
+                          ),
+                        );
+                      })
+                      : FutureBuilder(
+                    future: _attendees,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        //Load images in background
+                        List<EventAttendee> attendeeList = snapshot.data;
+                        return ListView.builder(
+                            itemCount: attendeeList.length,
+                            itemBuilder: (context, index) {
+                              return Card(
+                                child: ListTile(
+                                    leading: CircleAvatar(
+                                      backgroundColor: Colors.white,
+                                      child: ClipOval(
+                                        child: FadeInImage.assetNetwork(
+                                          placeholder: 'assets/images/profile.png',
+                                          image: attendeeList[index].profileImage,
+                                          height: 50.0,
+                                          width: 50.0,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                    title: Text(attendeeList[index].name),
+                                    subtitle:
+                                    Text(attendeeList[index].interests.join(", ")),
+                                    trailing: FlatButton(
+                                      child: attendeeList[index].saved
+                                          ? Icon(Icons.star)
+                                          : Icon(Icons.star_border),
+                                      onPressed: () {
+                                        setState(() {
+                                          attendeeList[index].saved
+                                              ? widget.event
+                                              .removeConnection(attendeeList[index])
+                                              : widget.event
+                                              .addConnection(attendeeList[index]);
+                                        });
+                                      },
+                                    )),
+                              );
+                            });
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text(snapshot.error));
+                      } else {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                    },
+                  ),
+                )
+              ],
+            ),
+          )
       ),
     );
+  }
+
+  onSearchTextChanged(String text) async {
+    _searchResult.clear();
+    if(text.isEmpty){
+      setState(() {});
+      return;
+    }
+    List<EventAttendee> attendees = await _attendees;
+    attendees.forEach((attendee) {
+      if(attendee.name.toLowerCase().contains(text.toLowerCase()))
+        _searchResult.add(attendee);
+    });
+    setState(() {});
   }
 
   Future _editInterests(context) async {
@@ -133,14 +226,5 @@ class _TabWhoState extends State<TabWho> {
     setState(() {
 
     });
-  }
-
-  Future<void> _showProfileDialog(EventAttendee attendee) async {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context){
-        return ProfileDialog(attendee: attendee);
-      },
-    );
   }
 }
