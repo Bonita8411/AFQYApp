@@ -72,7 +72,7 @@ class _TabWhoState extends State<TabWho> {
                             title: new TextField(
                               controller: _txtcontroller,
                               decoration: InputDecoration(
-                                  hintText: 'Search', border: InputBorder.none
+                                  hintText: 'Enter name or interest', border: InputBorder.none
                               ),
                               onChanged: onSearchTextChanged, //method to control search action
                             ),
@@ -189,8 +189,19 @@ class _TabWhoState extends State<TabWho> {
     }
     List<EventAttendee> attendees = await _attendees;
     attendees.forEach((attendee) {
-      if(attendee.name.toLowerCase().contains(text.toLowerCase()))
+      bool isAlreadyAdded = false;
+      if(attendee.name.toLowerCase().contains(text.toLowerCase())) {
         _searchResult.add(attendee);
+        isAlreadyAdded = true;
+      }
+      if(!isAlreadyAdded && attendee.interests.length != 0){
+        attendee.interests.forEach((interest) {
+          if(!isAlreadyAdded && interest.toLowerCase().contains(text.toLowerCase())){
+            _searchResult.add(attendee);
+            isAlreadyAdded = true;
+          }
+        });
+      }
     });
     setState(() {});
   }
