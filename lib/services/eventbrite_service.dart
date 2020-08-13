@@ -3,7 +3,7 @@ import 'package:afqyapp/models/Eventbrite_event.dart';
 import 'package:http/http.dart' as http;
 
 class EventbriteService{
-  static bool isProduction = true;
+  static bool isProduction = false;
   static String apiKey = isProduction ? "OYFDYJB7SMZ2VFQG5CO6" : "ZGD5HQHQPTGYG3F5S2YI";
   static String _organizationId = isProduction ? "47604957273" : "429473716086";
   static List<EventbriteEvent> _loadedEvents = [];
@@ -17,7 +17,7 @@ class EventbriteService{
 
   static Future<List<EventbriteEvent>> refreshEvents() async{
     try {
-      String eventListUrl = "https://www.eventbriteapi.com/v3/organizations/${_organizationId}/events/?expand=venue&order_by=start_desc&status=live&token=" + apiKey;
+      String eventListUrl = "https://www.eventbriteapi.com/v3/organizations/${_organizationId}/events/?expand=venue&order_by=start_asc&status=live&token=" + apiKey;
       print(eventListUrl);
       http.Response response = await http.get(eventListUrl);
       List events = json.decode(response.body)['events'];
