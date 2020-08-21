@@ -4,7 +4,6 @@ import 'package:afqyapp/screens/events/profile_dialog.dart';
 import 'package:afqyapp/screens/events/verify_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:afqyapp/models/Eventbrite_event.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class TabWho extends StatefulWidget {
   final EventbriteEvent event;
