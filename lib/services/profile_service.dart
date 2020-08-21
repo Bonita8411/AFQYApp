@@ -6,7 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class ProfileService{
-  Future updateProfilePicture(File image) async {
+  static Future updateProfilePicture(File image) async {
     try{      
       FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
       
@@ -34,16 +34,10 @@ class ProfileService{
     }
   }
 
-  Future updateBio(String bio) async {
+  static Future updateBio(String bio) async {
     FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
     await Firestore.instance.document('users/' + currentUser.uid).setData({
       "bio": bio
     }, merge: true);
-  }
-
-  Future<UserProfile> getCurrentUserProfile() async {
-    FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
-    DocumentSnapshot snapshot = await Firestore.instance.document('users/' + currentUser.uid).get();
-    return UserProfile.fromFirestoreSnapshot(snapshot);
   }
 }
