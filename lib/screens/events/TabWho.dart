@@ -2,6 +2,7 @@ import 'package:afqyapp/models/event_attendee.dart';
 import 'package:afqyapp/screens/events/edit_interests.dart';
 import 'package:afqyapp/screens/events/profile_dialog.dart';
 import 'package:afqyapp/screens/events/verify_dialog.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:afqyapp/models/Eventbrite_event.dart';
 
