@@ -13,7 +13,7 @@ class AttendeeModel extends UserProfile {
   AttendeeModel.fromFirebaseSnapshot(DocumentSnapshot snapshot) :
     this.attendeeID = snapshot.documentID,
     this.barcode = snapshot.data['barcode'],
-    this.interests = snapshot.data['interests'],
+    this.interests = snapshot.data['interests'] != null ? snapshot.data['interests'] : [],
     super(snapshot.data['uid'], snapshot.data['name'], '', '');
 
   Future refreshLinkedProfile() async {
