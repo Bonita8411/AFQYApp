@@ -45,12 +45,12 @@ class _EventState extends State<Event> {
                           new Flexible(
                               child: ListTile(
                                   onTap: () {
-//                                    Navigator.push(
-//                                        context,
-//                                        MaterialPageRoute(
-//                                          builder: (context) =>
-//                                              EventDetail(event: _eventList[index]),
-//                                        ));
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              EventDetail(event: _eventList[index]),
+                                        ));
                                   },
                                   leading: CircleAvatar(
                                       backgroundColor: Colors.red[900],

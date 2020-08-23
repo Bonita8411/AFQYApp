@@ -1,18 +1,19 @@
 import 'package:afqyapp/models/Eventbrite_event.dart';
+import 'package:afqyapp/models/event_model.dart';
 import 'package:afqyapp/screens/web_browser.dart';
 import "package:flutter/material.dart";
 import 'package:intl/intl.dart';
 
 class TabEvent extends StatelessWidget {
-  final EventbriteEvent event;
+  final EventModel event;
 
   TabEvent({Key key, @required this.event}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     String startTime, endTime;
-    startTime = DateFormat('yMd').add_jm().format(event.startDT);
-    endTime = DateFormat('yMd').add_jm().format(event.endDT);
+    startTime = DateFormat('yMd').add_jm().format(event.startTime);
+    endTime = DateFormat('yMd').add_jm().format(event.endTime);
     return Scaffold(
       body: Center(
         child: Padding(
@@ -20,7 +21,7 @@ class TabEvent extends StatelessWidget {
           child: ListView(
             children: <Widget>[
               // Picture of event
-              event.imageURL != null ? Image.network(event.imageURL) : Container(),
+              event.photoURL != null ? Image.network(event.photoURL) : Container(),
               new Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -63,7 +64,7 @@ class TabEvent extends StatelessWidget {
                 ],
               ),
               Text(
-                event.description,
+                event.shortDescription,
                 style: TextStyle(
                   color: Colors.grey[600],
                 ),

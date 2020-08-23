@@ -1,11 +1,12 @@
 import 'package:afqyapp/models/Eventbrite_event.dart';
+import 'package:afqyapp/models/event_model.dart';
 import 'package:afqyapp/screens/events/TabConnections.dart';
 import 'package:afqyapp/screens/events/TabWho.dart';
 import "package:flutter/material.dart";
 import 'TabEvent.dart';
 
 class EventDetail extends StatefulWidget{
-  final EventbriteEvent event;
+  final EventModel event;
   EventDetail({Key key, @required this.event}) : super(key: key);
 
   @override
@@ -26,6 +27,7 @@ class _EventDetailState extends State<EventDetail> with SingleTickerProviderStat
     currentTitle = _tabs[0].title;
     _tcontroller = TabController(vsync: this, length: _tabs.length);
     _tcontroller.addListener(changeTitle); // Registering listener
+    widget.event.startLoadingAttendees();
   }
 
   void changeTitle() {
@@ -41,7 +43,7 @@ class _EventDetailState extends State<EventDetail> with SingleTickerProviderStat
       length: 3,
       child:Scaffold(
         appBar: AppBar(
-          title: Text(widget.event.title),
+          title: Text(widget.event.name),
           backgroundColor: Colors.red[900],
           bottom: TabBar(
             tabs: <Widget>[
@@ -65,7 +67,8 @@ class _EventDetailState extends State<EventDetail> with SingleTickerProviderStat
           children: <Widget>[
             TabEvent(event: widget.event, key: widget.key,),
             TabWho(event: widget.event, key: widget.key,),
-            TabConnections(event: widget.event, key: widget.key,),
+            TabEvent(event: widget.event, key: widget.key,),
+//            TabConnections(event: widget.event, key: widget.key,),
           ],
         ),
       ),

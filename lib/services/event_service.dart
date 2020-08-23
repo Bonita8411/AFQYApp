@@ -4,10 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class EventService {
   List<EventModel> events;
   Function streamCallback;
+  String eventCollection = 'events-testing';
 
   EventService._privateConstructor() {
     events = [];
-    Firestore.instance.collection('events').where("status", isEqualTo: "live").snapshots().listen((snapshot) => _onSnapshot(snapshot));
+    Firestore.instance.collection(eventCollection).where("status", isEqualTo: "live").snapshots().listen((snapshot) => _onSnapshot(snapshot));
   }
 
   static final EventService _instance = EventService._privateConstructor();
