@@ -22,9 +22,9 @@ class _AttendeeWidgetState extends State<AttendeeWidget> {
         CircleAvatar(
           backgroundColor: Colors.red[900],
           child: ClipOval(
-            child: CachedNetworkImage(
-              imageUrl: attendee.profilePictureURL,
-              placeholder: (context, url) => Image.asset('assets/images/profile.png'),
+            child: FadeInImage.assetNetwork(
+              image: attendee.profilePictureURL,
+              placeholder: 'assets/images/profile.png',
               width: 50.0,
               height: 50.0,
               fit: BoxFit.cover,

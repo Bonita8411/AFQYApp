@@ -237,30 +237,7 @@ import 'attendee_widget.dart';
 //    );
 //  }
 //
-//  onSearchTextChanged(String text) async {
-//    _searchResult.clear();
-//    if(text.isEmpty){
-//      setState(() {});
-//      return;
-//    }
-//    List<EventAttendee> attendees = await _attendees;
-//    attendees.forEach((attendee) {
-//      bool isAlreadyAdded = false;
-//      if(attendee.name.toLowerCase().contains(text.toLowerCase())) {
-//        _searchResult.add(attendee);
-//        isAlreadyAdded = true;
-//      }
-//      if(!isAlreadyAdded && attendee.interests.length != 0){
-//        attendee.interests.forEach((interest) {
-//          if(!isAlreadyAdded && interest.toLowerCase().contains(text.toLowerCase())){
-//            _searchResult.add(attendee);
-//            isAlreadyAdded = true;
-//          }
-//        });
-//      }
-//    });
-//    setState(() {});
-//  }
+
 //
 //  Future _editInterests(context) async {
 //    //Check if user is verified
@@ -315,23 +292,127 @@ class TabWho extends StatefulWidget {
 }
 
 class _TabWhoState extends State<TabWho> {
+  List<AttendeeModel> _searchResult = [];
+  TextEditingController _txtcontroller;
+  String sortValue = 'A-Z';
+
   @override
   void initState() {
-    // TODO: implement initState
-    super.initState();
     widget.event.streamCallback = () => setState(() {});
+    _txtcontroller = TextEditingController();
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    List<AttendeeModel> _attendees = widget.event.attendees;
+    List<AttendeeModel> _attendees = _searchResult.length != 0 || _txtcontroller.text.isNotEmpty ? _searchResult : widget.event.attendees;
 
-    return ListView.builder(
-      itemCount: _attendees.length,
-      itemBuilder: (context, index){
-        return AttendeeWidget(_attendees[index]);
-      },
+    return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: Colors.red[900],
+        icon: Icon(Icons.edit),
+        label: Text("Edit Interests"),
+        onPressed: () {
+//          _editInterests(context);
+        },
+      ),
+      body: Column(
+        children: <Widget>[
+          Container(
+            child: new Padding(
+              padding: EdgeInsets.all(0.0),
+              child: new Card(
+                child: new ListTile(
+                  leading: new Icon(Icons.search),
+                  title: new TextField(
+                    controller: _txtcontroller,
+                    decoration: InputDecoration(
+                        hintText: 'Enter name or interest', border: InputBorder.none
+                    ),
+                    onChanged: onSearchTextChanged, //method to control search action
+                  ),
+                  trailing: new IconButton(icon: new Icon(Icons.cancel),
+                    onPressed: () {
+                      _txtcontroller.clear();
+                      onSearchTextChanged('');
+                    }),
+                )
+                )
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text('Sort:',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(width: 20.0),
+              DropdownButton(
+                value: sortValue,
+                icon: Icon(Icons.filter_list),
+                items: <String>['A-Z', 'Z-A', 'Common Interests']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    sortValue = value;
+                    switch(value){
+                      case 'A-Z':
+                        widget.event.sortAttendeesAtoZ();
+                        break;
+                      case 'Z-A':
+                        widget.event.sortAttendeesZtoA();
+                        break;
+                      case 'Common Interests':
+                        widget.event.sortAttendeesByInterest();
+                    }
+                  });
+                },
+              ),
+            ],
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _attendees.length,
+              itemBuilder: (context, index){
+                return AttendeeWidget(_attendees[index]);
+              },
+            ),
+          ),
+        ],
+      ),
     );
+  }
+
+  onSearchTextChanged(String text) async {
+    _searchResult.clear();
+    if(text.isEmpty){
+      setState(() {});
+      return;
+    }
+    List<AttendeeModel> attendees = widget.event.attendees;
+    attendees.forEach((attendee) {
+      bool isAlreadyAdded = false;
+      if(attendee.name.toLowerCase().contains(text.toLowerCase())) {
+        _searchResult.add(attendee);
+        isAlreadyAdded = true;
+      }
+      if(!isAlreadyAdded && attendee.interests.length != 0){
+        attendee.interests.forEach((interest) {
+          if(!isAlreadyAdded && interest.toLowerCase().contains(text.toLowerCase())){
+            _searchResult.add(attendee);
+            isAlreadyAdded = true;
+          }
+        });
+      }
+    });
+    setState(() {});
   }
 }
 
