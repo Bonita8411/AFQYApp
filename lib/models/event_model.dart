@@ -11,17 +11,19 @@ class EventModel {
   String photoURL;
   DateTime startTime;
   DateTime endTime;
+  String location;
   List<AttendeeModel> attendees = [];
   Function streamCallback;
 
   EventModel.fromFirestoreSnapshot(DocumentSnapshot snapshot) :
         this.eventID = snapshot.documentID,
-        this.name = snapshot.data['name'],
-        this.shortDescription = snapshot.data['shortDescription'],
+        this.name = snapshot.data['title'],
+        this.shortDescription = snapshot.data['description'],
         this.htmlDescription = snapshot.data['htmlDescription'],
-        this.photoURL = snapshot.data['photoURL'],
-        this.startTime = snapshot.data['startTime'],
-        this.endTime = snapshot.data['endTime'] {
+        this.photoURL = snapshot.data['imageURL'],
+        this.startTime = DateTime.parse(snapshot.data['startDT']),
+        this.endTime = DateTime.parse(snapshot.data['endDT']),
+        this.location = snapshot.data['location'] {
     Firestore.instance.collection('events/' + eventID + '/attendees').snapshots().listen((snapshot) => _attendeeStreamListener);
   }
 

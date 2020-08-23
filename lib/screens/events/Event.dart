@@ -1,4 +1,6 @@
 import 'package:afqyapp/models/Eventbrite_event.dart';
+import 'package:afqyapp/models/event_model.dart';
+import 'package:afqyapp/services/event_service.dart';
 import 'package:afqyapp/services/eventbrite_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -13,40 +15,29 @@ class Event extends StatefulWidget {
 }
 
 class _EventState extends State<Event> {
-  Future<List<EventbriteEvent>> _eventList;
+  List<EventModel> _eventList;
 
   @override
   void initState() {
     super.initState();
-    _eventList = EventbriteService.getEvents();
+    _eventList = EventService.instance.events;
+    EventService.instance.streamCallback = () => setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-        onRefresh: () {
-          setState(() {
-            _eventList = EventbriteService.refreshEvents();
-          });
-          return _eventList;
-        },
-        child: FutureBuilder<List<EventbriteEvent>>(
-          future: _eventList,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              final events = snapshot.data;
-              return ListView.builder(
-                  itemCount: events == null ? 0 : events.length,
+    return ListView.builder(
+                  itemCount: _eventList.length,
                   itemBuilder: (BuildContext context, int index) {
-                    final event = events[index];
+                    final event = _eventList[index];
                     String startMon, startDay, startTime, endTime;
-                    startMon = DateFormat('MMM').format(event.startDT);
-                    startDay = DateFormat('d').format(event.startDT);
-                    startTime = (!event.hideStartTime)
-                        ? DateFormat('jm').format(event.startDT)
+                    startMon = DateFormat('MMM').format(event.startTime);
+                    startDay = DateFormat('d').format(event.startTime);
+                    startTime = (event.startTime != null)
+                        ? DateFormat('jm').format(event.startTime)
                         : "TBA";
-                    endTime = (!event.hideEndTime)
-                        ? DateFormat('jm').format(event.endDT)
+                    endTime = (event.endTime != null)
+                        ? DateFormat('jm').format(event.endTime)
                         : "TBA";
                     return Card(
                       child: Row(
@@ -54,12 +45,12 @@ class _EventState extends State<Event> {
                           new Flexible(
                               child: ListTile(
                                   onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              EventDetail(event: events[index]),
-                                        ));
+//                                    Navigator.push(
+//                                        context,
+//                                        MaterialPageRoute(
+//                                          builder: (context) =>
+//                                              EventDetail(event: _eventList[index]),
+//                                        ));
                                   },
                                   leading: CircleAvatar(
                                       backgroundColor: Colors.red[900],
@@ -67,8 +58,8 @@ class _EventState extends State<Event> {
                                       foregroundColor: Colors.grey[100],
                                       child: Text(startDay + "\n" + startMon,
                                           textAlign: TextAlign.center)),
-                                  title: Text(event.title),
-                                  subtitle: Text(event.location +
+                                  title: Text(event.name),
+                                  subtitle: Text(event.location != null ? event.location : 'TBA' +
                                       "\n" +
                                       startTime +
                                       " - " +
@@ -79,11 +70,5 @@ class _EventState extends State<Event> {
                       ),
                     );
                   });
-            } else if (snapshot.hasError) {
-              return Center(child: Text("${snapshot.error}"));
-            }
-            return Center(child: CircularProgressIndicator());
-          },
-        ));
   }
 }
