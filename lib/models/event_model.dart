@@ -1,3 +1,4 @@
+import 'package:afqyapp/models/event_attendee.dart';
 import 'package:afqyapp/services/event_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -60,15 +61,15 @@ class EventModel {
   }
 
   void sortAttendeesAtoZ() {
-    print('a-z sort');
+    attendees.sort((a, b) => a.name.compareTo(b.name));
   }
 
   void sortAttendeesZtoA() {
-    print('z-a sort');
+    attendees.sort((a, b) => b.name.compareTo(a.name));
   }
 
   void sortAttendeesByInterest() {
-    print('interest sort');
+    attendees.sort((a, b) => b.computeSimilarInterestsNumber(currentAttendee).compareTo(a.computeSimilarInterestsNumber(currentAttendee)));
   }
 
   Future addConnection(String connectionID) async{

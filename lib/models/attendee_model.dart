@@ -30,4 +30,17 @@ class AttendeeModel extends UserProfile {
 
     return this;
   }
+
+  int computeSimilarInterestsNumber(AttendeeModel other){
+    int numSameInterests = 0;
+    this.interests.forEach((thisInterest) {
+      other.interests.forEach((otherInterest) {
+        if(thisInterest == otherInterest){
+          numSameInterests++;
+        }
+      });
+    });
+
+    return numSameInterests;
+  }
 }
