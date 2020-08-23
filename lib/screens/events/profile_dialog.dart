@@ -42,7 +42,11 @@ class _ProfileDialogState extends State<ProfileDialog> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0),
               ),
               SizedBox(height: 10.0),
-              Text(attendee.interests.join(", "),
+              Text(attendee.bio != null ? attendee.bio : '',
+                textAlign: TextAlign.center,
+                ),
+              SizedBox(height: 10.0),
+              Text("Interests: " + attendee.interests.join(", "),
                 textAlign: TextAlign.center,
               )
             ],

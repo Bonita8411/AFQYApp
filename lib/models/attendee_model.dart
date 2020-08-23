@@ -18,7 +18,7 @@ class AttendeeModel extends UserProfile {
     this.barcode = snapshot.data['barcode'],
     this.interests = snapshot.data['interests'] != null ? snapshot.data['interests'].cast<String>() : [],
     this.connectionIDs = snapshot.data['connectionIDs'] != null ? HashSet.from(snapshot.data['connectionIDs'].cast<String>()) : HashSet(),
-    super(snapshot.data['uid'], snapshot.data['name'], '', '');
+    super(snapshot.data['uid'], snapshot.data['name'], '', null);
 
   Future refreshLinkedProfile() async {
     if(this.uid != null){

@@ -21,20 +21,23 @@ class _AttendeeWidgetState extends State<AttendeeWidget> {
     return Card(
       child: ListTile(
         enabled: !attendee.isCurrentUser,
-        leading: attendee.profilePictureURL != null ?
-        CircleAvatar(
+        leading: CircleAvatar(
           backgroundColor: Colors.red[900],
           child: ClipOval(
-            child: FadeInImage.assetNetwork(
+            child: attendee.profilePictureURL != null ?
+            FadeInImage.assetNetwork(
               image: attendee.profilePictureURL,
               placeholder: 'assets/images/profile.png',
               width: 50.0,
               height: 50.0,
               fit: BoxFit.cover,
+            )
+            : Image.asset('assets/images/profile.png',
+              width: 50.0,
+              height: 50.0,
             ),
           ),
-        )
-            : Image.asset('assets/images/profile.png'),
+        ),
         title: Text(attendee.name),
         subtitle: Text(attendee.interests.join(', ')),
         trailing: IconButton(
