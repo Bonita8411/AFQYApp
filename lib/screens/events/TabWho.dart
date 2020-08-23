@@ -313,7 +313,7 @@ class _TabWhoState extends State<TabWho> {
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: Colors.red[900],
         icon: Icon(Icons.edit),
-        label: Text("Edit Interests"),
+        label: widget.event.currentAttendee != null ? Text("Edit Interests") : Text('Verify Ticket'),
         onPressed: () {
           _editInterests(context);
         },

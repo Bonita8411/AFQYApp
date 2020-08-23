@@ -138,7 +138,9 @@ class EventModel {
 
     //Set connections
     attendees.forEach((element) {
-      element.isConnection = currentAttendee.connectionIDs.contains(element.attendeeID);
+      element.isConnection = currentAttendee != null
+          ? currentAttendee.connectionIDs.contains(element.attendeeID)
+          : false;
     });
   }
 }

@@ -23,9 +23,11 @@ class AttendeeModel extends UserProfile {
   Future refreshLinkedProfile() async {
     if(this.uid != null){
       DocumentSnapshot snapshot = await Firestore.instance.document('users/' + this.uid).get();
-      this.profilePictureURL = snapshot.data['photoURL'];
-      this.name = snapshot.data['name'] != null ? snapshot.data['name'] : this.name;
-      this.bio = snapshot.data['bio'];
+      if(snapshot.exists){
+        this.profilePictureURL = snapshot.data['photoURL'];
+        this.name = snapshot.data['name'] != null ? snapshot.data['name'] : this.name;
+        this.bio = snapshot.data['bio'];
+      }
     }
 
     return this;

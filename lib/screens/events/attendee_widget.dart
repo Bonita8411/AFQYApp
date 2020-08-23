@@ -45,11 +45,17 @@ class _AttendeeWidgetState extends State<AttendeeWidget> {
             Icon(Icons.star) :
             Icon(Icons.star_border),
             onPressed: attendee.isCurrentUser ? null : () {
+            if(widget.event.currentAttendee != null){
               if(attendee.isConnection){
                 widget.event.removeConnection(attendee.attendeeID);
               }else{
                 widget.event.addConnection(attendee.attendeeID);
               }
+            }else{
+              Scaffold.of(context).showSnackBar(SnackBar(
+                content: Text('You must have a verified ticket to add connections.'),
+              ));
+            }
             },
         ),
         onTap: () {
