@@ -36,11 +36,13 @@
 //    return Scaffold(
 import 'package:afqyapp/models/attendee_model.dart';
 import 'package:afqyapp/models/event_model.dart';
+import 'package:afqyapp/screens/events/verify_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 import 'attendee_widget.dart';
+import 'edit_interests.dart';
 
 ////      appBar: AppBar(
 ////        backgroundColor: Colors.white,
@@ -313,7 +315,7 @@ class _TabWhoState extends State<TabWho> {
         icon: Icon(Icons.edit),
         label: Text("Edit Interests"),
         onPressed: () {
-//          _editInterests(context);
+          _editInterests(context);
         },
       ),
       body: Column(
@@ -413,6 +415,32 @@ class _TabWhoState extends State<TabWho> {
       }
     });
     setState(() {});
+  }
+
+  Future _editInterests(context) async {
+    //Check if user is verified
+    await widget.event.isCurrentUserVerified().then((verified) {
+      if (verified) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EditInterestsScreen(event: widget.event),
+            )).then((value) => setState(() {}));
+      } else {
+        _showVerifyDialog();
+      }
+    }).catchError((error) {
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text(error)));
+    });
+  }
+
+  Future<void> _showVerifyDialog() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return VerifyDialog(event: widget.event);
+      },
+    );
   }
 }
 

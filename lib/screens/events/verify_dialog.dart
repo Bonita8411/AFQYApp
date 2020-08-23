@@ -1,10 +1,11 @@
 import 'package:afqyapp/models/Eventbrite_event.dart';
+import 'package:afqyapp/models/event_model.dart';
 import 'package:afqyapp/screens/events/edit_interests.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
 
 class VerifyDialog extends StatefulWidget {
-  final EventbriteEvent event;
+  final EventModel event;
   VerifyDialog({Key key, @required this.event}) : super(key: key);
 
   @override
@@ -77,19 +78,13 @@ class _VerifyDialogState extends State<VerifyDialog> {
       _loading = true;
     });
     await widget.event.verifyTicket(_ticketNumber).then((verified){
-      if(verified){
-        Navigator.of(context).pop();
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  EditInterestsScreen(event: widget.event),
-            ));
-      }else{
-        setState(() {
-          _error = 'Ticket not found';
-        });
-      }
+      Navigator.of(context).pop();
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                EditInterestsScreen(event: widget.event),
+          ));
     }).catchError((error){
       setState(() {
         _error = error;

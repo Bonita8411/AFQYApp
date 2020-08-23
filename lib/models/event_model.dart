@@ -83,6 +83,14 @@ class EventModel {
     }, merge: true);
   }
 
+  Future<List> updateInterests(List interests) async {
+    //Update interests
+    await Firestore.instance.document('${EventService.instance.eventCollection}/${this.eventID}/attendees/${currentAttendee.attendeeID}').updateData({
+      'interests': interests,
+    });
+    return interests;
+  }
+
   void startLoadingAttendees(){
     if(!_hasStartedLoadingAttendees){
       _hasStartedLoadingAttendees = true;
