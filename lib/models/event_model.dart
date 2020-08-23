@@ -16,6 +16,7 @@ class EventModel {
   List<AttendeeModel> attendees = [];
   Function streamCallback;
   bool _hasStartedLoadingAttendees = false;
+  AttendeeModel currentAttendee;
 
   EventModel.fromFirestoreSnapshot(DocumentSnapshot snapshot)
       : this.eventID = snapshot.documentID,
@@ -70,6 +71,18 @@ class EventModel {
     print('interest sort');
   }
 
+  Future addConnection(String connectionID) async{
+      return Firestore.instance.document('${EventService.instance.eventCollection}/$eventID/attendees/${currentAttendee.attendeeID}').setData({
+        "connectionIDs": FieldValue.arrayUnion([connectionID])
+      }, merge: true);
+  }
+
+  Future removeConnection(String connectionID) async{
+    return Firestore.instance.document('${EventService.instance.eventCollection}/$eventID/attendees/${currentAttendee.attendeeID}').setData({
+      "connectionIDs": FieldValue.arrayRemove([connectionID])
+    }, merge: true);
+  }
+
   void startLoadingAttendees(){
     if(!_hasStartedLoadingAttendees){
       _hasStartedLoadingAttendees = true;
@@ -91,6 +104,9 @@ class EventModel {
       bool isCurrentUser = currentUser.uid == attendeeSnapshot.document['uid'];
       AttendeeModel a =
       AttendeeModel.fromFirebaseSnapshot(attendeeSnapshot.document, isCurrentUser);
+      if(isCurrentUser){
+        currentAttendee = a;
+      }
       int foundAt = attendees.indexWhere((searchAttendee) =>
       searchAttendee.attendeeID == attendeeSnapshot.document.documentID);
       if (attendeeSnapshot.type == DocumentChangeType.removed) {
@@ -103,13 +119,17 @@ class EventModel {
         }
         started++;
         a.refreshLinkedProfile().then((value) {
-          print('refreshing');
           completed++;
           if (started == completed && streamCallback != null) {
             streamCallback();
           }
         });
       }
+    });
+
+    //Set connections
+    attendees.forEach((element) {
+      element.isConnection = currentAttendee.connectionIDs.contains(element.attendeeID);
     });
   }
 }

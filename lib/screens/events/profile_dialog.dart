@@ -1,11 +1,12 @@
 import 'package:afqyapp/models/Eventbrite_event.dart';
+import 'package:afqyapp/models/attendee_model.dart';
 import 'package:afqyapp/models/event_attendee.dart';
 import 'package:afqyapp/screens/events/edit_interests.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
 
 class ProfileDialog extends StatefulWidget {
-  final EventAttendee attendee;
+  final AttendeeModel attendee;
   ProfileDialog({Key key, @required this.attendee}) : super(key: key);
 
   @override
@@ -15,7 +16,7 @@ class ProfileDialog extends StatefulWidget {
 class _ProfileDialogState extends State<ProfileDialog> {
   @override
   Widget build(BuildContext context) {
-    EventAttendee attendee = widget.attendee;
+    AttendeeModel attendee = widget.attendee;
 
     return AlertDialog(
         content: SingleChildScrollView(
@@ -30,7 +31,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
                       height: 180.0,
                       child: FadeInImage.assetNetwork(
                           placeholder: 'assets/images/profile.png',
-                          image: attendee.profileImage)
+                          image: attendee.profilePictureURL)
                   ),
                 ),
               ),

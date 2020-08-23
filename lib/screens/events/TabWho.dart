@@ -298,13 +298,13 @@ class _TabWhoState extends State<TabWho> {
 
   @override
   void initState() {
-    widget.event.streamCallback = () => setState(() {});
     _txtcontroller = TextEditingController();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    widget.event.streamCallback = () => setState(() {});
     List<AttendeeModel> _attendees = _searchResult.length != 0 || _txtcontroller.text.isNotEmpty ? _searchResult : widget.event.attendees;
 
     return Scaffold(
@@ -381,7 +381,7 @@ class _TabWhoState extends State<TabWho> {
             child: ListView.builder(
               itemCount: _attendees.length,
               itemBuilder: (context, index){
-                return AttendeeWidget(_attendees[index]);
+                return AttendeeWidget(_attendees[index], widget.event);
               },
             ),
           ),

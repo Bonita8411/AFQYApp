@@ -67,8 +67,7 @@ class _EventDetailState extends State<EventDetail> with SingleTickerProviderStat
           children: <Widget>[
             TabEvent(event: widget.event, key: widget.key,),
             TabWho(event: widget.event, key: widget.key,),
-            TabEvent(event: widget.event, key: widget.key,),
-//            TabConnections(event: widget.event, key: widget.key,),
+            TabConnections(event: widget.event, key: widget.key,),
           ],
         ),
       ),
