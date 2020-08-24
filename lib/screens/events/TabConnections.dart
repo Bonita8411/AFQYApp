@@ -1,10 +1,7 @@
 import 'package:afqyapp/models/attendee_model.dart';
-import 'package:afqyapp/models/event_attendee.dart';
 import 'package:afqyapp/models/event_model.dart';
 import 'package:afqyapp/screens/events/attendee_widget.dart';
-import 'package:afqyapp/screens/events/profile_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:afqyapp/models/Eventbrite_event.dart';
 
 class TabConnections extends StatefulWidget {
   final EventModel event;

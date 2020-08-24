@@ -1,4 +1,3 @@
-import 'package:afqyapp/models/Eventbrite_event.dart';
 import 'package:afqyapp/models/event_model.dart';
 import 'package:afqyapp/screens/web_browser.dart';
 import "package:flutter/material.dart";

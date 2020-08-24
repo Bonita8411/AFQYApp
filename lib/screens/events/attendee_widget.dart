@@ -1,7 +1,6 @@
 import 'package:afqyapp/models/attendee_model.dart';
 import 'package:afqyapp/models/event_model.dart';
 import 'package:afqyapp/screens/events/profile_dialog.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class AttendeeWidget extends StatefulWidget {

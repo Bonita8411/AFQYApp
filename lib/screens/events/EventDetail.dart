@@ -1,4 +1,3 @@
-import 'package:afqyapp/models/Eventbrite_event.dart';
 import 'package:afqyapp/models/event_model.dart';
 import 'package:afqyapp/screens/events/TabConnections.dart';
 import 'package:afqyapp/screens/events/TabWho.dart';
@@ -52,6 +51,7 @@ class _EventDetailState extends State<EventDetail> with SingleTickerProviderStat
               new Tab(text: _tabs[2].title),
             ],
             onTap: (index){
+
             },
           ),
 //                actions: <Widget>[

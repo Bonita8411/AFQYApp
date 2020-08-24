@@ -1,4 +1,3 @@
-import 'package:afqyapp/models/event_attendee.dart';
 import 'package:afqyapp/services/event_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
