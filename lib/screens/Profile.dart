@@ -1,3 +1,5 @@
+import 'package:afqyapp/services/profile_service.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
@@ -20,9 +22,9 @@ class _ProfileState extends State<Profile> {
   Future<FirebaseUser> _user = FirebaseAuth.instance.currentUser();
 
   Future getImage() async {
-    await ImagePicker.pickImage(source: ImageSource.gallery).then((image) {
+    await ImagePicker().getImage(source: ImageSource.gallery, imageQuality: 25).then((image) {
       setState(() {
-        _image = image;
+        _image = File(image.path);
         print('Image Path $_image');
       });
     });
@@ -53,7 +55,7 @@ class _ProfileState extends State<Profile> {
 
 
 
- Future<String> createAlterDialog(BuildContext context) async{
+ Future<String> createAlertDialog(BuildContext context) async{
     TextEditingController myController = TextEditingController();
     return showDialog(context: context,builder: (context){
       return AlertDialog (
@@ -138,9 +140,9 @@ Future getBio() async{
                                             fit: BoxFit.cover,
                                           )
                                         : firebaseUser.photoUrl != null ?
-                                    FadeInImage.assetNetwork(
-                                      placeholder: "assets/images/profile.png",
-                                      image: firebaseUser.photoUrl,
+                                    CachedNetworkImage(
+                                      placeholder: (context, url) => CircularProgressIndicator(),
+                                      imageUrl: firebaseUser.photoUrl,
                                       fit: BoxFit.cover,
                                     ) :
                                         Image.asset('assets/images/profile.png')
@@ -174,7 +176,13 @@ Future getBio() async{
                                           size: 30.0,
                                         ),
                                         onPressed: () {
-                                          uploadImage(context);
+                                          ProfileService.updateProfilePicture(_image).then((value) {
+                                            Scaffold.of(context).showSnackBar(
+                                                SnackBar(content: Text('Your profile picture has been updated')));
+                                          }).catchError(() {
+                                            Scaffold.of(context).showSnackBar(
+                                                SnackBar(content: Text('An error has occured. Your profile picture has not been updated')));
+                                          });
                                         },
                                       ),
                                       Text('Upload')
@@ -195,7 +203,7 @@ Future getBio() async{
                         OutlineButton(
                             child: Text('Edit Bio'),
                             onPressed: () {
-                              createAlterDialog(context).then((onValue){
+                              createAlertDialog(context).then((onValue){
                                 Scaffold.of(context).showSnackBar(
                                     SnackBar(content: Text('Your Bio has been updated')));
                                 setState(() {
@@ -203,7 +211,6 @@ Future getBio() async{
                                     _bioString = onValue;
                                     saveBio(_bioString);
                                   }
-
                                 });
                               });
                               },
