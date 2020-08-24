@@ -18,11 +18,12 @@ class TabWho extends StatefulWidget {
 class _TabWhoState extends State<TabWho> {
   List<AttendeeModel> _searchResult = [];
   TextEditingController _txtcontroller;
-  String sortValue = 'A-Z';
+  String sortValue = 'Common Interests';
 
   @override
   void initState() {
     _txtcontroller = TextEditingController();
+    widget.event.sortAttendeesByInterest();
     super.initState();
   }
 
@@ -76,7 +77,7 @@ class _TabWhoState extends State<TabWho> {
               DropdownButton(
                 value: sortValue,
                 icon: Icon(Icons.filter_list),
-                items: <String>['A-Z', 'Z-A', 'Common Interests']
+                items: <String>['Common Interests', 'A-Z', 'Z-A']
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,

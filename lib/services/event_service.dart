@@ -22,6 +22,11 @@ class EventService {
         events.add(EventModel.fromFirestoreSnapshot(event.document));
       } else if(event.type == DocumentChangeType.removed){
         events.removeAt(foundAt);
+      }else{
+        List tempAttendeeList = events[foundAt].attendees;
+        EventModel e = EventModel.fromFirestoreSnapshot(event.document);
+        e.attendees = tempAttendeeList;
+        events[foundAt] = e;
       }
     });
     if(streamCallback != null){
