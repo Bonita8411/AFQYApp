@@ -1,12 +1,14 @@
-import 'package:afqyapp/models/event_attendee.dart';
-import 'package:afqyapp/screens/events/edit_interests.dart';
-import 'package:afqyapp/screens/events/profile_dialog.dart';
+import 'package:afqyapp/models/attendee_model.dart';
+import 'package:afqyapp/models/event_model.dart';
 import 'package:afqyapp/screens/events/verify_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:afqyapp/models/Eventbrite_event.dart';
+import 'package:flutter/widgets.dart';
+import 'attendee_widget.dart';
+import 'edit_interests.dart';
 
 class TabWho extends StatefulWidget {
-  final EventbriteEvent event;
+  final EventModel event;
+
   TabWho({Key key, @required this.event}) : super(key: key);
 
   @override
@@ -14,103 +16,138 @@ class TabWho extends StatefulWidget {
 }
 
 class _TabWhoState extends State<TabWho> {
-  Future<List<EventAttendee>> _attendees;
+  List<AttendeeModel> _searchResult = [];
+  TextEditingController _txtcontroller;
+  String sortValue = 'A-Z';
 
   @override
   void initState() {
+    _txtcontroller = TextEditingController();
     super.initState();
-    _attendees = widget.event.getAttendees();
-    _attendees.then((value){
-      _setPhotoURLs();
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    widget.event.streamCallback = () => setState(() {});
+    List<AttendeeModel> _attendees = _searchResult.length != 0 || _txtcontroller.text.isNotEmpty ? _searchResult : widget.event.attendees;
+
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: Colors.red[900],
         icon: Icon(Icons.edit),
-        label: Text("Edit Interests"),
+        label: widget.event.currentAttendee != null ? Text("Edit Interests") : Text('Verify Ticket'),
         onPressed: () {
           _editInterests(context);
         },
       ),
-      body: RefreshIndicator(
-        onRefresh: () {
-          setState(() {
-            _attendees = widget.event.refreshAttendees();
-            _attendees.then((value){
-              _setPhotoURLs();
-            });
-          });
-          return _attendees;
-        },
-        child: FutureBuilder(
-          future: _attendees,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              //Load images in background
-              List<EventAttendee> attendeeList = snapshot.data;
-              return ListView.builder(
-                  itemCount: attendeeList.length,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      child: ListTile(
-                        onTap: () {
-                          _showProfileDialog(attendeeList[index]);
-                        },
-                          leading: CircleAvatar(
-                            backgroundColor: Colors.white,
-                            child: ClipOval(
-                              child: FadeInImage.assetNetwork(
-                                  placeholder: 'assets/images/profile.png',
-                                  image: attendeeList[index].profileImage,
-                                height: 50.0,
-                                width: 50.0,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          title: Text(attendeeList[index].name),
-                          subtitle:
-                              Text(attendeeList[index].interests.join(", ")),
-                          trailing: FlatButton(
-                            child: attendeeList[index].saved
-                                ? Icon(Icons.star)
-                                : Icon(Icons.star_border),
-                            onPressed: () {
-                              setState(() {
-                                attendeeList[index].saved
-                                    ? widget.event
-                                        .removeConnection(attendeeList[index])
-                                    : widget.event
-                                        .addConnection(attendeeList[index]);
-                              });
-                            },
-                          )),
-                    );
+      body: Column(
+        children: <Widget>[
+          Container(
+            child: new Padding(
+              padding: EdgeInsets.all(0.0),
+              child: new Card(
+                child: new ListTile(
+                  leading: new Icon(Icons.search),
+                  title: new TextField(
+                    controller: _txtcontroller,
+                    decoration: InputDecoration(
+                        hintText: 'Enter name or interest', border: InputBorder.none
+                    ),
+                    onChanged: onSearchTextChanged, //method to control search action
+                  ),
+                  trailing: new IconButton(icon: new Icon(Icons.cancel),
+                    onPressed: () {
+                      _txtcontroller.clear();
+                      onSearchTextChanged('');
+                    }),
+                )
+                )
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text('Sort:',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(width: 20.0),
+              DropdownButton(
+                value: sortValue,
+                icon: Icon(Icons.filter_list),
+                items: <String>['A-Z', 'Z-A', 'Common Interests']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    sortValue = value;
+                    switch(value){
+                      case 'A-Z':
+                        widget.event.sortAttendeesAtoZ();
+                        break;
+                      case 'Z-A':
+                        widget.event.sortAttendeesZtoA();
+                        break;
+                      case 'Common Interests':
+                        widget.event.sortAttendeesByInterest();
+                    }
                   });
-            } else if (snapshot.hasError) {
-              return Center(child: Text(snapshot.error));
-            } else {
-              return Center(child: CircularProgressIndicator());
-            }
-          },
-        ),
+                },
+              ),
+            ],
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _attendees.length,
+              itemBuilder: (context, index){
+                return AttendeeWidget(_attendees[index], widget.event);
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
 
+  onSearchTextChanged(String text) async {
+    _searchResult.clear();
+    if(text.isEmpty){
+      setState(() {});
+      return;
+    }
+    List<AttendeeModel> attendees = widget.event.attendees;
+    attendees.forEach((attendee) {
+      bool isAlreadyAdded = false;
+      if(attendee.name.toLowerCase().contains(text.toLowerCase())) {
+        _searchResult.add(attendee);
+        isAlreadyAdded = true;
+      }
+      if(!isAlreadyAdded && attendee.interests.length != 0){
+        attendee.interests.forEach((interest) {
+          if(!isAlreadyAdded && interest.toLowerCase().contains(text.toLowerCase())){
+            _searchResult.add(attendee);
+            isAlreadyAdded = true;
+          }
+        });
+      }
+    });
+    setState(() {});
+  }
+
   Future _editInterests(context) async {
     //Check if user is verified
-    await widget.event.checkTicket().then((verified) {
+    await widget.event.isCurrentUserVerified().then((verified) {
       if (verified) {
         Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => EditInterestsScreen(event: widget.event),
-            ));
+            )).then((value) => setState(() {}));
       } else {
         _showVerifyDialog();
       }
@@ -127,20 +164,5 @@ class _TabWhoState extends State<TabWho> {
       },
     );
   }
-
-  void _setPhotoURLs() async{
-    await widget.event.setProfileURLs();
-    setState(() {
-
-    });
-  }
-
-  Future<void> _showProfileDialog(EventAttendee attendee) async {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context){
-        return ProfileDialog(attendee: attendee);
-      },
-    );
-  }
 }
+
