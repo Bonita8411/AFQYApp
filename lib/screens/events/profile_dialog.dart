@@ -1,4 +1,6 @@
 import 'package:afqyapp/models/attendee_model.dart';
+import 'package:afqyapp/screens/chat/thread_screen.dart';
+import 'package:afqyapp/services/message_service.dart';
 import 'package:flutter/material.dart';
 
 class ProfileDialog extends StatefulWidget {
@@ -46,7 +48,18 @@ class _ProfileDialogState extends State<ProfileDialog> {
               SizedBox(height: 10.0),
               Text("Interests: " + attendee.interests.join(", "),
                 textAlign: TextAlign.center,
-              )
+              ),
+              attendee.uid == null ? Container()
+                  : RaisedButton(
+                      child: Text('Send Message'),
+                      onPressed: (){
+                        MessageService.instance.newThread([attendee.uid]).then((thread) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => ThreadScreen(thread)));
+                        });
+                    },
+                  )
             ],
           ),
         ),
