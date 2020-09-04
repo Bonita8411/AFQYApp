@@ -1,3 +1,4 @@
+import 'package:afqyapp/screens/chat/threads_screen.dart';
 import "package:flutter/material.dart";
 import 'Home.dart';
 import 'events/Event.dart';
@@ -17,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen>{
   final _pageOptions = [
     Home(),
     Event(),
-    Messages(),
+    ThreadsScreen(),
     Profile()
   ];
 
