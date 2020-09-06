@@ -20,6 +20,7 @@ class AttendeeModel extends UserProfile {
     this.connectionIDs = snapshot.data['connectionIDs'] != null ? HashSet.from(snapshot.data['connectionIDs'].cast<String>()) : HashSet(),
     super(snapshot.data['uid'], snapshot.data['name'], '', null);
 
+  @override
   Future refreshLinkedProfile() async {
     if(this.uid != null){
       DocumentSnapshot snapshot = await Firestore.instance.document('users/' + this.uid).get();

@@ -1,78 +1,66 @@
+import 'dart:async';
+import 'dart:collection';
+
 import 'package:afqyapp/models/thread_model.dart';
 import 'package:afqyapp/models/user_profile.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class MessageService {
   List<ThreadModel> threads;
-  Function listener = () => {};
-  UserProfile currentUser;
-  bool _loaded = false;
+  Function callback = () => {};
+  String currentUserId;
+  StreamSubscription _childAddedSubscription;
+  StreamSubscription _childChangedSubscription;
+  DatabaseReference ref;
 
   MessageService._privateConstructor() {
-    threads = [];
+    setCurrentUser();
   }
 
   static final MessageService _instance = MessageService._privateConstructor();
 
   static MessageService get instance => _instance;
 
-  Future<ThreadModel> newThread(List<String> otherParticipantIds) async {
-    FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
-    DatabaseReference threadRef = FirebaseDatabase.instance
-        .reference()
-        .child('threads')
-        .orderByChild(currentUser.uid)
-        .equalTo(true).reference();
-    DataSnapshot snapshot = await threadRef.once();
+  Future setCurrentUser() async {
+    FirebaseAuth.instance.currentUser().then((user) {
+      currentUserId = user.uid;
+      threads = [];
 
-    bool found = false;
-    snapshot.value?.forEach((key, threadContent) {
-      int sameIds = 0;
-      otherParticipantIds.forEach((element) {
-        threadContent.keys.forEach((idKey){
-          if(element == idKey){
-            sameIds++;
-            threadRef = FirebaseDatabase.instance.reference().child('threads').child(key).reference();
-          }
-        });
+      Query userThreadsQuery = FirebaseDatabase.instance.reference().child('threads').orderByChild('p/$currentUserId').equalTo(true);
+
+      _childAddedSubscription?.cancel();
+      _childAddedSubscription = userThreadsQuery.onChildAdded.listen((threadEvent) {
+        threads.add(ThreadModel.fromSnapshot(threadEvent.snapshot));
       });
-      found = threadContent.length == otherParticipantIds.length + 2 && otherParticipantIds.length == sameIds;
+
+//      _childChangedSubscription.cancel();
+//      _childChangedSubscription = userThreadsQuery.onChildChanged.listen((threadEvent) async {
+//        ThreadModel changedThread =
+//      });
     });
-
-    snapshot = await threadRef.once();
-
-    if(!found){
-      Map threadMap = Map.fromIterable(otherParticipantIds,
-          key: (e) => e, value: (e) => true);
-      threadMap['lm'] = "Start a conversation...";
-      threadMap[currentUser.uid] = true;
-      DatabaseReference threadRef = FirebaseDatabase.instance
-          .reference()
-          .child('threads')
-          .push()
-          .reference();
-      threadRef.set(threadMap);
-      snapshot = await threadRef.once();
-    }
-    ThreadModel tm = new ThreadModel.fromSnapshot(snapshot);
-    return tm;
   }
 
-  void loadThreads() {
-    if (!_loaded && currentUser != null) {
-      _loaded = true;
-      FirebaseDatabase.instance
-          .reference()
-          .child('threads')
-          .orderByChild(currentUser.uid)
-          .equalTo(true)
-          .onChildAdded
-          .listen((snapshot) async {
-        threads.add(ThreadModel.fromSnapshot(snapshot.snapshot));
-        listener();
-      });
+  Future<ThreadModel> newThread(List<UserProfile> otherParticipants) async {
+    //Construct map with current user and participants
+    Map participantMap = Map.fromIterable(otherParticipants, key: (k) => k.uid, value: (v) => true);
+    participantMap[currentUserId] = true;
+    //Return thread if exists
+    DataSnapshot snapshot = await FirebaseDatabase.instance.reference().child('threads').orderByChild('p/$currentUserId').equalTo(true).once();
+
+    for(var key in snapshot.value.keys){
+      dynamic value = snapshot.value[key];
+
+      if(value['p'].length == participantMap.length){
+        if(participantMap.keys.toSet().containsAll(value['p'].keys.toSet())){
+          ThreadModel t = MessageService.instance.threads.singleWhere((element) => element.threadID == key);
+          return t;
+        }
+      }
     }
+
+    //Create local thread if not exists
+    otherParticipants.add(new UserProfile(currentUserId, null, null, null));
+    return ThreadModel(otherParticipants);
   }
 }

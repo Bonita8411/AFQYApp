@@ -1,5 +1,6 @@
 import 'package:afqyapp/models/message_model.dart';
 import 'package:afqyapp/models/thread_model.dart';
+import 'package:afqyapp/services/message_service.dart';
 import 'package:flutter/material.dart';
 
 class ThreadScreen extends StatefulWidget {
@@ -17,9 +18,14 @@ class _ThreadScreenState extends State<ThreadScreen> {
 
   @override
   void initState() {
-    print('init thread');
-    widget.thread.listener = () => setState(() {});
+    widget.thread.viewStateListener = () => setState(() {});
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    widget.thread.viewStateListener = () => {};
+    super.dispose();
   }
 
   @override
@@ -27,7 +33,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
     ThreadModel thread = widget.thread;
     return Scaffold(
       appBar: AppBar(
-        title: Text(thread.threadID),
+        title: Text(thread.participantsToString()),
       ),
       body: Column(
         children: [
@@ -37,10 +43,18 @@ class _ThreadScreenState extends State<ThreadScreen> {
               itemCount: thread.messages.length,
               itemBuilder: (context, index){
                 MessageModel message = thread.messages[index];
-                return Card(
-                  child: ListTile(
-                    title: Text(message.message),
-                  )
+                bool fromCurrent = MessageService.instance.currentUserId == message.senderID;
+                return Align(
+                  alignment: fromCurrent ? Alignment.centerRight : Alignment.centerLeft,
+                  child: FractionallySizedBox(
+                    widthFactor: 0.8,
+                    child: Card(
+                      color: fromCurrent ? Colors.red : Colors.white,
+                      child: ListTile(
+                        title: Text(message.message),
+                      )
+                    ),
+                  ),
                 );
               },
             ),

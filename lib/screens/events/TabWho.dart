@@ -32,14 +32,14 @@ class _TabWhoState extends State<TabWho> {
     List<AttendeeModel> _attendees = _searchResult.length != 0 || _txtcontroller.text.isNotEmpty ? _searchResult : widget.event.attendees;
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: Colors.red[900],
-        icon: Icon(Icons.edit),
-        label: widget.event.currentAttendee != null ? Text("Edit Interests") : Text('Verify Ticket'),
-        onPressed: () {
-          _editInterests(context);
-        },
-      ),
+//      floatingActionButton: FloatingActionButton.extended(
+//        backgroundColor: Colors.red[900],
+//        icon: Icon(Icons.edit),
+//        label: widget.event.currentAttendee != null ? Text("Edit Interests") : Text('Verify Ticket'),
+//        onPressed: () {
+//          _editInterests(context);
+//        },
+//      ),
       body: Column(
         children: <Widget>[
           Container(
@@ -99,6 +99,13 @@ class _TabWhoState extends State<TabWho> {
                   });
                 },
               ),
+              SizedBox(width: 20.0),
+              RaisedButton(
+                child: widget.event.currentAttendee != null ? Text("Edit Interests") : Text('Verify Ticket'),
+                onPressed: (){
+                  _editInterests(context);
+                },
+              )
             ],
           ),
           Expanded(

@@ -49,11 +49,19 @@ class _ProfileDialogState extends State<ProfileDialog> {
               Text("Interests: " + attendee.interests.join(", "),
                 textAlign: TextAlign.center,
               ),
-              attendee.uid == null ? Container()
+              SizedBox(height: 10.0),
+              attendee.uid == null ? Text('Ticket Not verified',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontStyle: FontStyle.italic
+                ),
+              )
                   : RaisedButton(
                       child: Text('Send Message'),
                       onPressed: (){
-                        MessageService.instance.newThread([attendee.uid]).then((thread) {
+                        MessageService.instance.newThread([attendee]).then((thread) {
+                          print('then');
                           Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => ThreadScreen(thread)));

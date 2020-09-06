@@ -209,7 +209,7 @@ Future getBio() async{
                                 setState(() {
                                   if(onValue != null){
                                     _bioString = onValue;
-                                    saveBio(_bioString);
+                                    ProfileService.updateBio(onValue);
                                   }
                                 });
                               });

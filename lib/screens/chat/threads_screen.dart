@@ -15,32 +15,32 @@ class ThreadsScreen extends StatefulWidget {
 class _ThreadsScreenState extends State<ThreadsScreen> {
   @override
   void initState() {
-    if(MessageService.instance.currentUser == null){
-      FirebaseAuth.instance.currentUser().then((value) {
-        MessageService.instance.currentUser = new UserProfile(value.uid, '', '', '');
-        MessageService.instance.listener = () => setState(() {});
-        MessageService.instance.loadThreads();
-        setState(() {
-
-        });
-      });
-    }
     super.initState();
   }
 
   @override
+  void dispose() {
+    MessageService.instance.threads.forEach((thread) {
+      thread.viewStateListener = () => {};
+    });
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    MessageService.instance.threads.forEach((thread) {
+      thread.viewStateListener = () => setState((){});
+    });
     List<ThreadModel> threads = MessageService.instance.threads;
     
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.edit),
-        onPressed: (){
-
-        },
-      ),
-      body: MessageService.instance.currentUser == null ? Center(child: CircularProgressIndicator(),)
-          : ListView.builder(
+//      floatingActionButton: FloatingActionButton(
+//        child: Icon(Icons.edit),
+//        onPressed: (){
+//
+//        },
+//      ),
+      body: ListView.builder(
             itemCount: threads.length,
             itemBuilder: (context, index){
               ThreadModel thread = threads[index];
@@ -50,9 +50,13 @@ class _ThreadsScreenState extends State<ThreadsScreen> {
                     Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => ThreadScreen(thread)),
-                  );
+                  ).then((value) {
+                    setState(() {
+
+                    });
+                    });
                   },
-                  title: Text(thread.threadID),
+                  title: Text(thread.participantsToString()),
                   subtitle: Text(thread.lastMessage),
                 ),);
             }

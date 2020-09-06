@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import "package:firebase_auth/firebase_auth.dart";
 import 'package:flutter/services.dart';
 
@@ -31,6 +32,10 @@ class AuthService{
       FirebaseUser user = result.user;
 
       //Add the user's name to the recently created user
+      Firestore.instance.document('users/${user.uid}').setData({
+        'name': name,
+      });
+
       UserUpdateInfo updateInfo = UserUpdateInfo();
       updateInfo.displayName = name;
       user.updateProfile(updateInfo);

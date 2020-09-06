@@ -37,7 +37,8 @@ class ProfileService{
   static Future updateBio(String bio) async {
     FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
     await Firestore.instance.document('users/' + currentUser.uid).setData({
-      "bio": bio
+      "bio": bio,
+      "name": currentUser.displayName
     }, merge: true);
   }
 }
