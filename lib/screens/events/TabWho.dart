@@ -18,10 +18,11 @@ class TabWho extends StatefulWidget {
 class _TabWhoState extends State<TabWho> {
   List<AttendeeModel> _searchResult = [];
   TextEditingController _txtcontroller;
-  String sortValue = 'A-Z';
+  String sortValue = 'Common Interests';
 
   @override
   void initState() {
+    widget.event.sortAttendeesByInterest();
     _txtcontroller = TextEditingController();
     super.initState();
   }

@@ -8,7 +8,7 @@ class EventService {
 
   EventService._privateConstructor() {
     events = [];
-    Firestore.instance.collection(eventCollection).where("status", isEqualTo: "live").snapshots().listen((snapshot) => _onSnapshot(snapshot));
+    Firestore.instance.collection(eventCollection).where("status", whereIn: ["live", "started", "ended"]).snapshots().listen((snapshot) => _onSnapshot(snapshot));
   }
 
   static final EventService _instance = EventService._privateConstructor();
