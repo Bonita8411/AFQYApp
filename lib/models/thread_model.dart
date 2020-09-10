@@ -94,4 +94,18 @@ class ThreadModel {
   Future deleteThread() async {
     return ref.remove();
   }
+
+  Future addUsers(List userIds) async {
+    if(isNew){
+      await _uploadThread();
+    }
+    for(int i = 0; i < userIds.length; i++){
+      await ref.child('p/${userIds[i]}').set(true);
+    }
+
+  }
+
+  Future removeUser(String uid) async {
+    return ref.child('p/$uid').remove();
+  }
 }

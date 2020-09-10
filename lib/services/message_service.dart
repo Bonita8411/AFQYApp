@@ -3,6 +3,7 @@ import 'dart:collection';
 
 import 'package:afqyapp/models/thread_model.dart';
 import 'package:afqyapp/models/user_profile.dart';
+import 'package:cloud_firestore/cloud_firestore.dart' as firestore;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 
@@ -62,5 +63,18 @@ class MessageService {
     //Create local thread if not exists
     otherParticipants.add(new UserProfile(currentUserId, null, null, null));
     return ThreadModel(otherParticipants);
+  }
+  
+  Future<List<UserProfile>> userSearch(String name) async {
+    List<UserProfile> users = [];
+    String endKey = name.substring(0, name.length-1) + String.fromCharCode(name.codeUnitAt(name.length-1) + 1);
+    firestore.QuerySnapshot snapshot = await firestore.Firestore.instance.collection('users')
+        .where("name", isGreaterThanOrEqualTo: name)
+        .where("name", isLessThan: endKey)
+        .getDocuments();
+    snapshot.documents.forEach((element) {
+      users.add(UserProfile.fromFirestoreSnapshot(element));
+    });
+    return users;
   }
 }
