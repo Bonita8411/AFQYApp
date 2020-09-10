@@ -48,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen>{
             ),
             BottomNavigationBarItem(
                 icon: Icon(Icons.message),
-                title: Text('Messages')
+                title: Text('Conversation')
             ),
             BottomNavigationBarItem(
                 icon: Icon(Icons.person),
