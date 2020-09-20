@@ -1,3 +1,5 @@
+import 'package:afqyapp/screens/chat/threads_screen.dart';
+import 'package:afqyapp/services/auth_service.dart';
 import "package:flutter/material.dart";
 import 'Home.dart';
 import 'events/Event.dart';
@@ -17,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen>{
   final _pageOptions = [
     Home(),
     Event(),
-    Messages(),
+    ThreadsScreen(),
     Profile()
   ];
 
@@ -27,6 +29,25 @@ class _HomeScreenState extends State<HomeScreen>{
       appBar: AppBar(
         backgroundColor: Colors.red[900],
         title: Text("AFQY App"),
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (index) {
+              switch(index){
+                case 'Logout':
+                  AuthService.signOut();
+                  break;
+              }
+            },
+            itemBuilder: (BuildContext context) {
+              return {'Logout'}.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
+                );
+              }).toList();
+            },
+          ),
+        ],
       ),
       body: _pageOptions[_currentIndex],
       bottomNavigationBar: new Theme(

@@ -1,11 +1,10 @@
-import 'package:afqyapp/models/Eventbrite_event.dart';
-import 'package:afqyapp/models/event_attendee.dart';
-import 'package:afqyapp/screens/events/edit_interests.dart';
-import 'package:barcode_scan/barcode_scan.dart';
+import 'package:afqyapp/models/attendee_model.dart';
+import 'package:afqyapp/screens/chat/thread_screen.dart';
+import 'package:afqyapp/services/message_service.dart';
 import 'package:flutter/material.dart';
 
 class ProfileDialog extends StatefulWidget {
-  final EventAttendee attendee;
+  final AttendeeModel attendee;
   ProfileDialog({Key key, @required this.attendee}) : super(key: key);
 
   @override
@@ -15,7 +14,7 @@ class ProfileDialog extends StatefulWidget {
 class _ProfileDialogState extends State<ProfileDialog> {
   @override
   Widget build(BuildContext context) {
-    EventAttendee attendee = widget.attendee;
+    AttendeeModel attendee = widget.attendee;
 
     return AlertDialog(
         content: SingleChildScrollView(
@@ -28,9 +27,11 @@ class _ProfileDialogState extends State<ProfileDialog> {
                   child: new SizedBox(
                       width: 180.0,
                       height: 180.0,
-                      child: FadeInImage.assetNetwork(
+                      child: attendee.profilePictureURL != null ? FadeInImage.assetNetwork(
                           placeholder: 'assets/images/profile.png',
-                          image: attendee.profileImage)
+                          image: attendee.profilePictureURL)
+                          : Image.asset('assets/images/profile.png',
+                      fit: BoxFit.cover),
                   ),
                 ),
               ),
@@ -41,9 +42,32 @@ class _ProfileDialogState extends State<ProfileDialog> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0),
               ),
               SizedBox(height: 10.0),
-              Text(attendee.interests.join(", "),
+              Text(attendee.bio != null ? attendee.bio : '',
                 textAlign: TextAlign.center,
+                ),
+              SizedBox(height: 10.0),
+              Text("Interests: " + attendee.interests.join(", "),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 10.0),
+              attendee.uid == null ? Text('Ticket Not verified',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontStyle: FontStyle.italic
+                ),
               )
+                  : RaisedButton(
+                      child: Text('Send Message'),
+                      onPressed: (){
+                        MessageService.instance.newThread([attendee]).then((thread) {
+                          print('then');
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => ThreadScreen(thread)));
+                        });
+                    },
+                  )
             ],
           ),
         ),
