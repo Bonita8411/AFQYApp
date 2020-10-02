@@ -38,7 +38,7 @@ class ThreadModel {
       "s": MessageService.instance.currentUserId,
       "t": ServerValue.timestamp,
     });
-    ref.update({"lm": message});
+    ref.update({"lm": message, "lmUID":MessageService.instance.currentUserId});
   }
 
   String participantsToString(){
