@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:afqyapp/models/event_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -5,15 +7,25 @@ class EventService {
   List<EventModel> events;
   Function streamCallback;
   String eventCollection = 'events-testing';
+  StreamSubscription streamSubscription;
+
 
   EventService._privateConstructor() {
-    events = [];
-    Firestore.instance.collection(eventCollection).where("status", whereIn: ["live", "started", "ended"]).snapshots().listen((snapshot) => _onSnapshot(snapshot));
+    refreshEvents();
+    print('Event Service Started');
   }
 
   static final EventService _instance = EventService._privateConstructor();
 
   static EventService get instance => _instance;
+
+  void refreshEvents(){
+    if(streamSubscription != null){
+      streamSubscription.cancel();
+    }
+    events = [];
+    streamSubscription = Firestore.instance.collection(eventCollection).where("status", whereIn: ["live", "started", "ended"]).snapshots().listen((snapshot) => _onSnapshot(snapshot));
+  }
 
   void _onSnapshot(QuerySnapshot snapshot){
     snapshot.documentChanges.forEach((event) {

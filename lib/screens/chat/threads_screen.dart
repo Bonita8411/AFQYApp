@@ -32,43 +32,53 @@ class _ThreadsScreenState extends State<ThreadsScreen> {
       thread.viewStateListener = () => setState((){});
     });
     List<ThreadModel> threads = MessageService.instance.threads;
-    
-    return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        icon: Icon(Icons.edit),
-        label: Text('New Message'),
-        onPressed: (){
-          MessageService.instance.newThread([]).then((thread) {
-            print('then');
-            Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ThreadScreen(thread))).then((value) => setState((){}));
-          });
-        },
-      ),
-      body: ListView.builder(
-            itemCount: threads.length,
-            itemBuilder: (context, index){
-              ThreadModel thread = threads[index];
-              return Card(
-                child: ListTile(
-                  onTap: () {
-                    Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ThreadScreen(thread)),
-                  ).then((value) {
-                    setState(() {
 
-                    });
-                    });
-                  },
-                  title: thread.participants.length > 1
-                      ? Text(thread.participantsToString())
-                      : Text('User left', style: TextStyle(fontStyle: FontStyle.italic)),
-                  subtitle: Text(thread.lastMessage,overflow: TextOverflow.ellipsis,),
-                ),);
-            }
+    if(threads.length == 0) {
+      Future.delayed(Duration(seconds: 3)).then((value) => setState((){}));
+      return Center(child: CircularProgressIndicator());
+    } else {
+      return Scaffold(
+          floatingActionButton: FloatingActionButton.extended(
+            icon: Icon(Icons.edit),
+            label: Text('New Message'),
+            onPressed: () {
+              MessageService.instance.newThread([]).then((thread) {
+                print('then');
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ThreadScreen(thread))).then((
+                    value) => setState(() {}));
+              });
+            },
+          ),
+          body: ListView.builder(
+              itemCount: threads.length,
+              itemBuilder: (context, index) {
+                ThreadModel thread = threads[index];
+                return Card(
+                  child: ListTile(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ThreadScreen(thread)),
+                      ).then((value) {
+                        setState(() {
+
+                        });
+                      });
+                    },
+                    title: thread.participants.length > 1
+                        ? Text(thread.participantsToString())
+                        : Text('User left',
+                        style: TextStyle(fontStyle: FontStyle.italic)),
+                    subtitle: Text(
+                      thread.lastMessage, overflow: TextOverflow.ellipsis,),
+                  ),);
+              }
           )
-    );
+      );
+    }
   }
 }

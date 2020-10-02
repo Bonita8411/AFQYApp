@@ -34,6 +34,7 @@ class MessageService {
       _childAddedSubscription = userThreadsQuery.onChildAdded.listen((threadEvent) {
         threads.add(ThreadModel.fromSnapshot(threadEvent.snapshot));
       });
+      print('Message service restarted');
 
 //      _childChangedSubscription.cancel();
 //      _childChangedSubscription = userThreadsQuery.onChildChanged.listen((threadEvent) async {
