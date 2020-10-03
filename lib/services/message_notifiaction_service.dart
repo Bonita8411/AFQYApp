@@ -6,10 +6,13 @@ class MessageNotificationService {
   static Future<String> registerNotification() async {
     FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
     _firebaseMessaging.requestNotificationPermissions();
+    _firebaseMessaging.requestNotificationPermissions();
 
     String token = await _firebaseMessaging.getToken();
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    await Firestore.instance.document('users/${user.uid}').setData({"notificationTokens" : FieldValue.arrayUnion([token]) }, merge: true);
+    await Firestore.instance.document('users/${user.uid}').setData({
+      "notificationTokens": FieldValue.arrayUnion([token])
+    }, merge: true);
 
     _firebaseMessaging.configure(
         onMessage: (Map<String, dynamic> message) async {
