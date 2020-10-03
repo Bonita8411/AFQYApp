@@ -85,11 +85,8 @@ class ThreadModel {
   }
 
   void _handleOnLastMessage(DataSnapshot snapshot) {
-    print(snapshot.value['lm']);
-    print(snapshot.value['timestamps'][MessageService.instance.currentUserId]);
-    print(snapshot.value['lmTime']);
-    print(snapshot.value['timestamps'][MessageService.instance.currentUserId] >= snapshot.value['lmTime']);
-    this.isRead = snapshot.value['timestamps'][MessageService.instance.currentUserId] >= snapshot.value['lmTime'];
+    this.isRead = snapshot.value['timestamps'][MessageService.instance.currentUserId] >= snapshot.value['lmTime']
+        || snapshot.value['lmUID'] == MessageService.instance.currentUserId;
     this.lastMessage = snapshot.value['lm'];
     threadsStateListener();
   }
