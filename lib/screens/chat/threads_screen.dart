@@ -21,7 +21,7 @@ class _ThreadsScreenState extends State<ThreadsScreen> {
   @override
   void dispose() {
     MessageService.instance.threads.forEach((thread) {
-      thread.viewStateListener = () => {};
+      thread.threadsStateListener = () => {};
     });
     super.dispose();
   }
@@ -29,7 +29,7 @@ class _ThreadsScreenState extends State<ThreadsScreen> {
   @override
   Widget build(BuildContext context) {
     MessageService.instance.threads.forEach((thread) {
-      thread.viewStateListener = () => setState((){});
+      thread.threadsStateListener = () => setState((){});
     });
     List<ThreadModel> threads = MessageService.instance.threads;
 
@@ -70,11 +70,18 @@ class _ThreadsScreenState extends State<ThreadsScreen> {
                       });
                     },
                     title: thread.participants.length > 1
-                        ? Text(thread.participantsToString())
+                        ? Text(thread.participantsToString(),
+                        style: TextStyle(
+                        fontWeight: thread.isRead ? FontWeight.normal : FontWeight.bold
+                    ),
+                    )
                         : Text('User left',
                         style: TextStyle(fontStyle: FontStyle.italic)),
                     subtitle: Text(
-                      thread.lastMessage, overflow: TextOverflow.ellipsis,),
+                      thread.lastMessage, overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          fontWeight: thread.isRead ? FontWeight.normal : FontWeight.bold
+                      ),),
                   ),);
               }
           )

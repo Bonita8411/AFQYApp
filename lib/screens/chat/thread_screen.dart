@@ -25,19 +25,20 @@ class _ThreadScreenState extends State<ThreadScreen> {
 
   @override
   void initState() {
-    widget.thread.viewStateListener = () => setState(() {});
+    widget.thread.threadStateListener = () => setState(() {});
     super.initState();
   }
 
   @override
   void dispose() {
-    widget.thread.viewStateListener = () => {};
+    widget.thread.threadStateListener = () => {};
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     ThreadModel thread = widget.thread;
+    thread.updateReadTimestamp();
     print(thread.isNew);
     return Scaffold(
       key: _scaffoldKey,
