@@ -55,9 +55,11 @@ class ThreadModel {
   }
 
   void updateReadTimestamp() {
-    ref
+    if(ref != null){
+      ref
         .child('timestamps')
         .update({MessageService.instance.currentUserId: ServerValue.timestamp});
+    }
   }
 
   String participantsToString() {

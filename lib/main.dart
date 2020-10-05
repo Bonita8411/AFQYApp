@@ -1,6 +1,4 @@
 import 'package:afqyapp/screens/authentication/auth_state_listener.dart';
-import 'package:afqyapp/services/event_service.dart';
-import 'package:afqyapp/services/message_service.dart';
 import 'package:flutter/material.dart';
 
 void main() {
