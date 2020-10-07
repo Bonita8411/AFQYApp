@@ -25,20 +25,20 @@ class _ThreadScreenState extends State<ThreadScreen> {
 
   @override
   void initState() {
-    widget.thread.viewStateListener = () => setState(() {});
+    widget.thread.threadStateListener = () => setState(() {});
+    widget.thread.updateReadTimestamp();
     super.initState();
   }
 
   @override
   void dispose() {
-    widget.thread.viewStateListener = () => {};
+    widget.thread.threadStateListener = () => {};
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     ThreadModel thread = widget.thread;
-    print(thread.isNew);
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -216,7 +216,9 @@ class _ThreadScreenState extends State<ThreadScreen> {
                         hintText: 'Enter Message...',
                       ),
                       onChanged: (val){
-                        messageInput = val;
+                        setState(() {
+                          messageInput = val;
+                        });
                       },
                     ),
                   ),
@@ -224,7 +226,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
               ),
               IconButton(
                 icon: Icon(Icons.send),
-                onPressed: (){
+                onPressed: messageInput.isEmpty ? null : (){
                   setState(() {
                     _formKey.currentState.reset();
                     thread.sendMessage(messageInput);
