@@ -3,6 +3,8 @@ import 'dart:collection';
 
 import 'package:afqyapp/models/thread_model.dart';
 import 'package:afqyapp/models/user_profile.dart';
+import 'package:afqyapp/models/event_model.dart';
+import 'package:afqyapp/services/event_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart' as firestore;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -14,6 +16,7 @@ class MessageService {
   StreamSubscription _childAddedSubscription;
   StreamSubscription _childChangedSubscription;
   DatabaseReference ref;
+  List<EventModel> _eventList;
 
   MessageService._privateConstructor() {
     setCurrentUser();
@@ -66,16 +69,33 @@ class MessageService {
     return ThreadModel(otherParticipants);
   }
   
-  Future<List<UserProfile>> userSearch(String name) async {
+  List<UserProfile> userSearch() {
     List<UserProfile> users = [];
-    String endKey = name.substring(0, name.length-1) + String.fromCharCode(name.codeUnitAt(name.length-1) + 1);
-    firestore.QuerySnapshot snapshot = await firestore.Firestore.instance.collection('users')
-        .where("name", isGreaterThanOrEqualTo: name)
-        .where("name", isLessThan: endKey)
-        .getDocuments();
-    snapshot.documents.forEach((element) {
-      users.add(UserProfile.fromFirestoreSnapshot(element));
-    });
+    _eventList = EventService.instance.events;
+    String currentUser;
+    for(int i = 0; i < _eventList.length; i++){
+      if(_eventList[i].currentAttendee!=null){
+        currentUser = _eventList[i].currentAttendee.name;
+        for(int k = 0; k < _eventList[i].attendees.length;k++){
+          if(!users.contains(_eventList[i].attendees[k])&&_eventList[i].attendees[k].name!=currentUser)
+            users.add(_eventList[i].attendees[k]);
+        }
+      }
+    }// attendees who are attending the same events
+    // users.forEach((user) {
+    //   if(!user.name.toLowerCase().contains(name.toLowerCase())){
+    //     users.remove(user);
+    //   }
+    // });
+    // Restrict user pool to people who are attending the same events.
+    // String endKey = name.substring(0, name.length-1) + String.fromCharCode(name.codeUnitAt(name.length-1) + 1);
+    // firestore.QuerySnapshot snapshot = await firestore.Firestore.instance.collection('users')
+    //     .where("name", isGreaterThanOrEqualTo: name)
+    //     .where("name", isLessThan: endKey)
+    //     .getDocuments();
+    // snapshot.documents.forEach((element) {
+    //   users.add(UserProfile.fromFirestoreSnapshot(element));
+    // });
     return users;
   }
 }
