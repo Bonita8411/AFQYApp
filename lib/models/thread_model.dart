@@ -119,9 +119,7 @@ class ThreadModel {
 
   void _handleOnMessage(DataSnapshot snapshot) {
     messages.insert(0, MessageModel.fromSnapshot(snapshot));
-    print(messages[0].message);
     loadedTimestamp = messages[messages.length-1].timestamp-1;
-    print(loadedTimestamp);
     threadStateListener();
   }
 
@@ -170,7 +168,6 @@ class ThreadModel {
   }
 
   Future loadMoreMessages() async {
-    print(lastMessageTimestamp);
     List<MessageModel> loadedMessages = [];
     var query = FirebaseDatabase.instance
         .reference()
