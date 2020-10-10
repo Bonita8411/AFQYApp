@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 
 class ProfileDialog extends StatefulWidget {
   final AttendeeModel attendee;
-  ProfileDialog({Key key, @required this.attendee}) : super(key: key);
+  final bool purchasedTicket;
+  ProfileDialog({Key key, @required this.attendee, this.purchasedTicket}) : super(key: key);
 
   @override
   _ProfileDialogState createState() => _ProfileDialogState();
@@ -50,7 +51,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 10.0),
-              attendee.uid == null ? Text('Ticket Not verified',
+              attendee.uid == null ? Text(attendee.name + ' has not purchased a ticket to this event.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.grey,
@@ -58,8 +59,8 @@ class _ProfileDialogState extends State<ProfileDialog> {
                 ),
               )
                   : RaisedButton(
-                      child: Text('Send Message'),
-                      onPressed: (){
+                      child: widget.purchasedTicket ? Text('Send Message') : Text('Chat requires a verfied ticket'),
+                      onPressed: !widget.purchasedTicket ? null : (){
                         MessageService.instance.newThread([attendee]).then((thread) {
                           print('then');
                           Navigator.push(

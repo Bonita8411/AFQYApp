@@ -76,7 +76,9 @@ class EventModel {
   }
 
   void sortAttendeesByInterest() {
-    attendees.sort((a, b) => b.computeSimilarInterestsNumber(currentAttendee).compareTo(a.computeSimilarInterestsNumber(currentAttendee)));
+    if(currentAttendee!=null){
+      attendees.sort((a, b) => b.computeSimilarInterestsNumber(currentAttendee).compareTo(a.computeSimilarInterestsNumber(currentAttendee)));
+    }
   }
 
   Future addConnection(String connectionID) async{
