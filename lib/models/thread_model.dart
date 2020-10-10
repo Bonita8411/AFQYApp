@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:afqyapp/models/message_model.dart';
 import 'package:afqyapp/models/user_profile.dart';
 import 'package:afqyapp/services/message_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:http/http.dart' as http;
 
 class ThreadModel {
   List<MessageModel> messages = [];
@@ -16,6 +19,8 @@ class ThreadModel {
   bool isNew = true;
   bool isRead = false;
   int lastMessageTimestamp;
+  String owner;
+  int loadedTimestamp = 0;
 
   ThreadModel(this.participants);
 
@@ -27,6 +32,7 @@ class ThreadModel {
             .map<UserProfile>((uid) => new UserProfile(uid, null, null, null))
             .toList(),
         lastMessageTimestamp = snapshot.value['lmTime'],
+        owner = snapshot.value['owner'],
         ref = FirebaseDatabase.instance
             .reference()
             .child('threads/${snapshot.key}')
@@ -81,7 +87,7 @@ class ThreadModel {
         .reference()
         .child('messages/$threadID')
         .orderByChild('t')
-        .limitToLast(10)
+        .limitToLast(20)
         .onChildAdded
         .listen((event) => _handleOnMessage(event.snapshot));
   }
@@ -113,6 +119,7 @@ class ThreadModel {
 
   void _handleOnMessage(DataSnapshot snapshot) {
     messages.insert(0, MessageModel.fromSnapshot(snapshot));
+    loadedTimestamp = messages[messages.length-1].timestamp-1;
     threadStateListener();
   }
 
@@ -124,7 +131,11 @@ class ThreadModel {
         .reference();
     Map participantsMap =
         Map.fromIterable(participants, key: (k) => k.uid, value: (v) => true);
-    await ref.set({'lm': '', 'p': participantsMap});
+    await ref.set({
+      'lm': '',
+      'p': participantsMap,
+      'owner': MessageService.instance.currentUserId
+    });
     DataSnapshot snapshot = await ref.once();
     threadID = snapshot.key;
     isNew = false;
@@ -145,6 +156,33 @@ class ThreadModel {
   }
 
   Future removeUser(String uid) async {
+    if(uid == owner){
+      ref.child('owner').set(participants.firstWhere((element) => element.uid != owner));
+    }
     return ref.child('p/$uid').remove();
+  }
+
+  Future reportMessage(MessageModel message, String reason) async{
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    return http.get('https://us-central1-afqy-app.cloudfunctions.net/redCard?name=${user.displayName}&email=${user.email}&reason=$reason&threadID=$threadID&message=${message.message}&messageID=${message.messageID}');
+  }
+
+  Future loadMoreMessages() async {
+    List<MessageModel> loadedMessages = [];
+    var query = FirebaseDatabase.instance
+        .reference()
+        .child('messages/$threadID')
+        .orderByChild('t')
+        .endAt(loadedTimestamp)
+        .limitToLast(20);
+      query.onChildAdded.forEach((snapshot){
+          loadedMessages.insert(0, MessageModel.fromSnapshot(snapshot.snapshot));
+    });
+    query.once().then((snapshot) {
+      messages.addAll(loadedMessages);
+      loadedTimestamp = messages[messages.length-1].timestamp -1;
+      threadStateListener();
+    });
+//        _handleOnMessage(event.snapshot);
   }
 }
