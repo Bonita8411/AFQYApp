@@ -151,12 +151,6 @@ class _ThreadScreenState extends State<ThreadScreen> {
                       },
                     )
                   ),
-                  RaisedButton(
-                    child: Text('load more'),
-                    onPressed: (){
-                      thread.loadMoreMessages();
-                    },
-                  ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: RaisedButton(
