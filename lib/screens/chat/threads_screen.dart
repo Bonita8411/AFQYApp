@@ -74,9 +74,9 @@ class _ThreadsScreenState extends State<ThreadsScreen> {
                     },
                     title: thread.participants.length > 1
                         ? Text(thread.participantsToString(),
-                        style: TextStyle(
-                        fontWeight: thread.isRead ? FontWeight.normal : FontWeight.bold
-                    ),
+                      style: TextStyle(
+                          fontWeight: thread.isRead ? FontWeight.normal : FontWeight.bold
+                      ),
                     )
                         : Text('User left',
                         style: TextStyle(fontStyle: FontStyle.italic)),
