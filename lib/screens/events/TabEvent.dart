@@ -1,18 +1,25 @@
 import 'package:afqyapp/models/event_model.dart';
+import 'package:afqyapp/screens/events/verify_instruction.dart';
 import 'package:afqyapp/screens/web_browser.dart';
 import "package:flutter/material.dart";
+import 'package:afqyapp/screens/events/verify_instruction.dart';
 import 'package:intl/intl.dart';
 
-class TabEvent extends StatelessWidget {
+class TabEvent extends StatefulWidget {
   final EventModel event;
 
   TabEvent({Key key, @required this.event}) : super(key: key);
 
   @override
+  _TabEventState createState() => _TabEventState();
+}
+
+class _TabEventState extends State<TabEvent> {
+  @override
   Widget build(BuildContext context) {
     String startTime, endTime;
-    startTime = DateFormat('yMd').add_jm().format(event.startTime);
-    endTime = DateFormat('yMd').add_jm().format(event.endTime);
+    startTime = DateFormat('yMd').add_jm().format(widget.event.startTime);
+    endTime = DateFormat('yMd').add_jm().format(widget.event.endTime);
     return Scaffold(
       body: Center(
         child: Padding(
@@ -20,7 +27,7 @@ class TabEvent extends StatelessWidget {
           child: ListView(
             children: <Widget>[
               // Picture of event
-              event.photoURL != null ? Image.network(event.photoURL) : Container(),
+              widget.event.photoURL != null ? Image.network(widget.event.photoURL) : Container(),
               new Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -48,13 +55,14 @@ class TabEvent extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    WebBrowser("https://www.eventbrite.co.nz/checkout-external?eid=" + event.eventID),
-                              ));
+                                    WebBrowser("https://www.eventbrite.co.nz/checkout-external?eid=" + widget.event.eventID),
+                              )
+                          ).then((value) => _showVerifyInstruction());
                         },
                         child: Text(
-                            "Purchase Ticket",
+                          "Purchase Ticket",
                           style: TextStyle(
-                            color: Colors.grey[100]
+                              color: Colors.grey[100]
                           ),
                         ),
                       ),
@@ -63,7 +71,7 @@ class TabEvent extends StatelessWidget {
                 ],
               ),
               Text(
-                event.shortDescription,
+                widget.event.shortDescription,
                 style: TextStyle(
                   color: Colors.grey[600],
                 ),
@@ -79,7 +87,7 @@ class TabEvent extends StatelessWidget {
                 ),
               ),
               Text(
-                event.location,
+                widget.event.location,
                 style: TextStyle(
                   color: Colors.grey[600],
                 ),
@@ -106,4 +114,15 @@ class TabEvent extends StatelessWidget {
       ),
     );
   }
+  Future<void> _showVerifyInstruction() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return VerifyInstruction();
+      },
+    );
+  }
 }
+
+
+
