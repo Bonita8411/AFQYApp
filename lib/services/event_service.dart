@@ -7,6 +7,7 @@ class EventService {
   List<EventModel> events;
   Function streamCallback;
   String eventCollection = 'events-testing';
+  // String eventCollection = 'events-production';
   StreamSubscription streamSubscription;
 
 
@@ -24,7 +25,7 @@ class EventService {
       streamSubscription.cancel();
     }
     events = [];
-    streamSubscription = Firestore.instance.collection(eventCollection).where("status", whereIn: ["live", "started", "ended"]).snapshots().listen((snapshot) => _onSnapshot(snapshot));
+    streamSubscription = Firestore.instance.collection(eventCollection).where("status", whereIn: ["live", "started", "ended", "completed"]).snapshots().listen((snapshot) => _onSnapshot(snapshot));
   }
 
   void _onSnapshot(QuerySnapshot snapshot){
