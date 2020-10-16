@@ -241,7 +241,8 @@ class _ThreadScreenState extends State<ThreadScreen> {
                                   });
                                 },
                                 child: ListTile(
-                                  title: Text(message.message),
+                                  title: Text(message.message,
+                                    style: TextStyle(color: fromCurrent ? Colors.white : Colors.black)),
                                 ),
                               )
                             ),

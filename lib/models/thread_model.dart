@@ -96,6 +96,7 @@ class ThreadModel {
     this.isRead = snapshot.value['timestamps'][MessageService.instance.currentUserId] >= snapshot.value['lmTime']
         || snapshot.value['lmUID'] == MessageService.instance.currentUserId;
     this.lastMessage = snapshot.value['lm'];
+    this.lastMessageTimestamp = snapshot.value['lmTime'];
     threadsStateListener();
   }
 

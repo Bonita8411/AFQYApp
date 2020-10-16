@@ -77,7 +77,7 @@ class MessageService {
       if(_eventList[i].currentAttendee!=null){
         currentUser = _eventList[i].currentAttendee.name;
         for(int k = 0; k < _eventList[i].attendees.length;k++){
-          if(!users.contains(_eventList[i].attendees[k])&&_eventList[i].attendees[k].name!=currentUser)
+          if(!users.contains(_eventList[i].attendees[k])&&_eventList[i].attendees[k].name!=currentUser && _eventList[i].attendees[k].uid != null)
             users.add(_eventList[i].attendees[k]);
         }
       }
