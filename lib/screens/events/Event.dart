@@ -19,6 +19,7 @@ class _EventState extends State<Event> {
   void initState() {
     super.initState();
     _eventList = EventService.instance.events;
+    _eventList.sort((a,b) => DateTime(b.startTime.year, b.startTime.month, b.startTime.day).compareTo(DateTime(a.startTime.year, a.startTime.month, a.startTime.day)));
     EventService.instance.streamCallback = () => setState(() {});
   }
 
@@ -51,7 +52,7 @@ class _EventState extends State<Event> {
                                         ));
                                   },
                                   leading: CircleAvatar(
-                                      backgroundColor: Colors.red[900],
+                                      backgroundColor: event.status == "live" ? Colors.red[900] : Colors.grey[500],
                                       radius: 36.0,
                                       foregroundColor: Colors.grey[100],
                                       child: Text(startDay + "\n" + startMon,

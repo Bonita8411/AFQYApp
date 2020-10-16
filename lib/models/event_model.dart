@@ -6,6 +6,7 @@ import 'attendee_model.dart';
 
 class EventModel {
   String eventID;
+  String status;
   String name;
   String shortDescription;
   String htmlDescription;
@@ -20,6 +21,7 @@ class EventModel {
 
   EventModel.fromFirestoreSnapshot(DocumentSnapshot snapshot)
       : this.eventID = snapshot.documentID,
+        this.status = snapshot.data['status'],
         this.name = snapshot.data['title'],
         this.shortDescription = snapshot.data['description'],
         this.htmlDescription = snapshot.data['htmlDescription'],
