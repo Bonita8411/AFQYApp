@@ -34,7 +34,7 @@ class _ThreadsScreenState extends State<ThreadsScreen> {
     });
     List<ThreadModel> threads = MessageService.instance.threads;
     //Sort threads by newest first
-    threads.sort((a, b) => b.lastMessageTimestamp.compareTo(a.lastMessageTimestamp));
+    threads.sort((a, b) => b.lastMessageTimestamp != null ? b.lastMessageTimestamp.compareTo(a.lastMessageTimestamp) : -1);
 
     if(threads.length == 0) {
       Future.delayed(Duration(seconds: 3)).then((value) => setState((){}));
@@ -81,7 +81,7 @@ class _ThreadsScreenState extends State<ThreadsScreen> {
                         : Text('User left',
                         style: TextStyle(fontStyle: FontStyle.italic)),
                     subtitle: Text(
-                      DateFormat('d MMM yy, h:mm a').format(DateTime.fromMillisecondsSinceEpoch(thread.lastMessageTimestamp)) + ": " + thread.lastMessage, overflow: TextOverflow.ellipsis,
+                      thread.lastMessageTimestamp != null ? DateFormat('d MMM yy, h:mm a').format(DateTime.fromMillisecondsSinceEpoch(thread.lastMessageTimestamp)) + ": " + thread.lastMessage : "", overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                           fontWeight: thread.isRead ? FontWeight.normal : FontWeight.bold
                       ),),
