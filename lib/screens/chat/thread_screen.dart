@@ -194,7 +194,12 @@ class _ThreadScreenState extends State<ThreadScreen> {
               itemBuilder: (context, index){
                     MessageModel message = thread.messages[index];
                     bool fromCurrent = MessageService.instance.currentUserId == message.senderID;
-                    UserProfile user = thread.participants.singleWhere((element) => element.uid == message.senderID);
+                    UserProfile user;
+                    try{
+                      user = thread.participants.singleWhere((element) => element.uid == message.senderID);
+                    }catch(e){
+                      user = new UserProfile(null, "This user left", null, null);
+                    }
                     return Align(
                       alignment: fromCurrent ? Alignment.centerRight : Alignment.centerLeft,
                       child: FractionallySizedBox(
