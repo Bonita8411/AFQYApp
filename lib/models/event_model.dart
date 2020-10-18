@@ -6,6 +6,7 @@ import 'attendee_model.dart';
 
 class EventModel {
   String eventID;
+  String status;
   String name;
   String shortDescription;
   String htmlDescription;
@@ -20,6 +21,7 @@ class EventModel {
 
   EventModel.fromFirestoreSnapshot(DocumentSnapshot snapshot)
       : this.eventID = snapshot.documentID,
+        this.status = snapshot.data['status'],
         this.name = snapshot.data['title'],
         this.shortDescription = snapshot.data['description'],
         this.htmlDescription = snapshot.data['htmlDescription'],
@@ -28,7 +30,15 @@ class EventModel {
         this.endTime = DateTime.parse(snapshot.data['endDT']),
         this.location = snapshot.data['location'] != null
             ? snapshot.data['location']
-            : 'TBA';
+            : 'TBA'{
+    Firestore.instance
+        .collection(EventService.instance.eventCollection +
+        '/' +
+        eventID +
+        '/attendees')
+        .snapshots()
+        .listen((snapshot) => _onAttendee(snapshot));
+  }
 
   Future verifyTicket(String barcode) async {
     QuerySnapshot snapshot = await Firestore.instance
@@ -68,7 +78,9 @@ class EventModel {
   }
 
   void sortAttendeesByInterest() {
-    attendees.sort((a, b) => b.computeSimilarInterestsNumber(currentAttendee).compareTo(a.computeSimilarInterestsNumber(currentAttendee)));
+    if(currentAttendee!=null){
+      attendees.sort((a, b) => b.computeSimilarInterestsNumber(currentAttendee).compareTo(a.computeSimilarInterestsNumber(currentAttendee)));
+    }
   }
 
   Future addConnection(String connectionID) async{
@@ -91,18 +103,18 @@ class EventModel {
     return interests;
   }
 
-  void startLoadingAttendees(){
-    if(!_hasStartedLoadingAttendees){
-      _hasStartedLoadingAttendees = true;
-      Firestore.instance
-          .collection(EventService.instance.eventCollection +
-          '/' +
-          eventID +
-          '/attendees')
-          .snapshots()
-          .listen((snapshot) => _onAttendee(snapshot));
-    }
-  }
+//  void startLoadingAttendees(){
+//    if(!_hasStartedLoadingAttendees){
+//      _hasStartedLoadingAttendees = true;
+//      Firestore.instance
+//          .collection(EventService.instance.eventCollection +
+//          '/' +
+//          eventID +
+//          '/attendees')
+//          .snapshots()
+//          .listen((snapshot) => _onAttendee(snapshot));
+//    }
+//  }
 
   void _onAttendee(QuerySnapshot snapshot) async {
     FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();

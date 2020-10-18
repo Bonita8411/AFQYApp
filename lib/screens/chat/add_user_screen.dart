@@ -15,10 +15,18 @@ class AddUserScreen extends StatefulWidget {
 
 class _AddUserScreenState extends State<AddUserScreen> {
   String searchName;
-  List<UserProfile> result = [];
+  TextEditingController _txtcontroller;
+  List<UserProfile> _attendees = [];
+
+  @override
+  void initState() {
+    _txtcontroller = TextEditingController();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    List<UserProfile> result = _attendees.length != 0 || _txtcontroller.text.isNotEmpty ? _attendees : [];
     return Scaffold(
       appBar: AppBar(
         title: Text('Add User'),
@@ -32,19 +40,21 @@ class _AddUserScreenState extends State<AddUserScreen> {
                 Flexible(
                   child: TextFormField(
                     decoration: const InputDecoration(
-                      hintText: 'Case sensitive',
+                      hintText: 'Search',
                       labelText: 'Name *',
                     ),
-                    onChanged: (val) => searchName = val,
+                    onChanged: onSearchTextChanged,
+                    // onChanged: (val) => searchName = val,
                   ),
                 ),
                 IconButton(
                   icon: Icon(Icons.search),
-                  onPressed: () async {
-                    result = await MessageService.instance.userSearch(searchName);
-                    setState(() {
-
-                    });
+                  onPressed: () {
+                    _txtcontroller.clear();
+                    onSearchTextChanged('');
+                    // result = MessageService.instance.userSearch(searchName);
+                    // setState(() {
+                    // });
                   },
                 )
               ],
@@ -93,5 +103,22 @@ class _AddUserScreenState extends State<AddUserScreen> {
         ),
       ),
     );
+  }
+
+  onSearchTextChanged(String text) async {
+    _attendees.clear();
+    if(text.isEmpty){
+      setState(() {});
+      return;
+    }
+    List<UserProfile> users = MessageService.instance.userSearch();
+    users.forEach((attendee) {
+      bool isAlreadyAdded = false;
+      if(attendee.name.toLowerCase().contains(text.toLowerCase())) {
+        _attendees.add(attendee);
+        isAlreadyAdded = true;
+      }
+    });
+    setState(() {});
   }
 }

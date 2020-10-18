@@ -26,7 +26,7 @@ class _EventDetailState extends State<EventDetail> with SingleTickerProviderStat
     currentTitle = _tabs[0].title;
     _tcontroller = TabController(vsync: this, length: _tabs.length);
     _tcontroller.addListener(changeTitle); // Registering listener
-    widget.event.startLoadingAttendees();
+//    widget.event.startLoadingAttendees();
   }
 
   void changeTitle() {

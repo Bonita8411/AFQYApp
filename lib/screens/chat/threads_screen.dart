@@ -6,6 +6,7 @@ import 'package:afqyapp/screens/chat/thread_screen.dart';
 import 'package:afqyapp/services/message_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ThreadsScreen extends StatefulWidget {
   @override
@@ -21,7 +22,7 @@ class _ThreadsScreenState extends State<ThreadsScreen> {
   @override
   void dispose() {
     MessageService.instance.threads.forEach((thread) {
-      thread.viewStateListener = () => {};
+      thread.threadsStateListener = () => {};
     });
     super.dispose();
   }
@@ -29,46 +30,65 @@ class _ThreadsScreenState extends State<ThreadsScreen> {
   @override
   Widget build(BuildContext context) {
     MessageService.instance.threads.forEach((thread) {
-      thread.viewStateListener = () => setState((){});
+      thread.threadsStateListener = () => setState((){});
     });
     List<ThreadModel> threads = MessageService.instance.threads;
-    
-    return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        icon: Icon(Icons.edit),
-        label: Text('New Message'),
-        onPressed: (){
-          MessageService.instance.newThread([]).then((thread) {
-            print('then');
-            Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ThreadScreen(thread))).then((value) => setState((){}));
-          });
-        },
-      ),
-      body: ListView.builder(
-            itemCount: threads.length,
-            itemBuilder: (context, index){
-              ThreadModel thread = threads[index];
-              return Card(
-                child: ListTile(
-                  onTap: () {
-                    Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ThreadScreen(thread)),
-                  ).then((value) {
-                    setState(() {
+    //Sort threads by newest first
+    threads.sort((a, b) => b.lastMessageTimestamp != null ? b.lastMessageTimestamp.compareTo(a.lastMessageTimestamp) : -1);
 
-                    });
-                    });
-                  },
-                  title: thread.participants.length > 1
-                      ? Text(thread.participantsToString())
-                      : Text('User left', style: TextStyle(fontStyle: FontStyle.italic)),
-                  subtitle: Text(thread.lastMessage,overflow: TextOverflow.ellipsis,),
-                ),);
-            }
+    if(threads.length == 0) {
+      Future.delayed(Duration(seconds: 3)).then((value) => setState((){}));
+      return Center(child: CircularProgressIndicator());
+    } else {
+      return Scaffold(
+          floatingActionButton: FloatingActionButton.extended(
+            icon: Icon(Icons.edit),
+            label: Text('New Message'),
+            onPressed: () {
+              MessageService.instance.newThread([]).then((thread) {
+                print('then');
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ThreadScreen(thread))).then((
+                    value) => setState(() {}));
+              });
+            },
+          ),
+          body: ListView.builder(
+              itemCount: threads.length,
+              itemBuilder: (context, index) {
+                ThreadModel thread = threads[index];
+                return Card(
+                  child: ListTile(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ThreadScreen(thread)),
+                      ).then((value) {
+                        setState(() {
+
+                        });
+                      });
+                    },
+                    title: thread.participants.length > 1
+                        ? Text(thread.participantsToString(),
+                      style: TextStyle(
+                          fontWeight: thread.isRead ? FontWeight.normal : FontWeight.bold
+                      ),
+                    )
+                        : Text('User left',
+                        style: TextStyle(fontStyle: FontStyle.italic)),
+                    subtitle: Text(
+                      thread.lastMessageTimestamp != null ? DateFormat('d MMM yy, h:mm a').format(DateTime.fromMillisecondsSinceEpoch(thread.lastMessageTimestamp)) + ": " + thread.lastMessage : "", overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          fontWeight: thread.isRead ? FontWeight.normal : FontWeight.bold
+                      ),),
+                  ),);
+              }
           )
-    );
+      );
+    }
   }
 }

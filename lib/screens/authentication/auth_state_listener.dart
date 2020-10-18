@@ -1,5 +1,8 @@
 import 'package:afqyapp/screens/authentication/auth_screen.dart';
 import 'package:afqyapp/screens/home_screen.dart';
+import 'package:afqyapp/services/auth_service.dart';
+import 'package:afqyapp/services/event_service.dart';
+import 'package:afqyapp/services/message_notifiaction_service.dart';
 import 'package:afqyapp/services/message_service.dart';
 import "package:flutter/material.dart";
 import "package:firebase_auth/firebase_auth.dart";
@@ -17,6 +20,8 @@ class AuthStateListener extends StatelessWidget {
             return AuthScreen();
           }
           MessageService.instance.setCurrentUser();
+          EventService.instance.refreshEvents();
+          MessageNotificationService.registerNotification().then((token) => AuthService.notificationToken = token);
           return HomeScreen();
         } else {
           return Scaffold(

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 class AuthService{
   static FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   static FirebaseUser currentUser;
+  static String notificationToken;
 
   static Future<FirebaseUser> signInWithEmailAndPassword(String email, String password) async {
     try {
@@ -55,6 +56,8 @@ class AuthService{
   }
 
   static Future signOut() async{
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    await Firestore.instance.document('users/${user.uid}').updateData({"notificationTokens" : FieldValue.arrayRemove([notificationToken])});
     return await _firebaseAuth.signOut();
   }
 

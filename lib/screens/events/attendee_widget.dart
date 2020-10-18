@@ -61,7 +61,7 @@ class _AttendeeWidgetState extends State<AttendeeWidget> {
           return showDialog<void>(
             context: context,
             builder: (BuildContext context){
-              return ProfileDialog(attendee: attendee);
+              return ProfileDialog(attendee: attendee, purchasedTicket: widget.event.currentAttendee != null,);
             },
           );
 
