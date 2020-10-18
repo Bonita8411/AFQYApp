@@ -6,8 +6,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class EventService {
   List<EventModel> events;
   Function streamCallback;
-  String eventCollection = 'events-testing';
-  // String eventCollection = 'events-production';
+  // String eventCollection = 'events-testing';
+  String eventCollection = 'events-production';
   StreamSubscription streamSubscription;
 
 
