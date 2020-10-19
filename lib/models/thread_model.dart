@@ -115,7 +115,7 @@ class ThreadModel {
           threadStateListener();
         }
       });
-    });
+    });   
   }
 
   void _handleOnMessage(DataSnapshot snapshot) {
@@ -157,8 +157,13 @@ class ThreadModel {
   }
 
   Future removeUser(String uid) async {
-    if(uid == owner){
-      ref.child('owner').set(participants.firstWhere((element) => element.uid != owner));
+    if(uid == this.owner){
+      try {
+        UserProfile newOwner = participants.firstWhere((element) => element.uid != owner);
+        ref.child('owner').set(newOwner.uid);
+      } catch (e) {
+        ref.child('owner').set(null);
+      }
     }
     return ref.child('p/$uid').remove();
   }
