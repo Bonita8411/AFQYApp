@@ -53,13 +53,15 @@ class MessageService {
     //Return thread if exists
     DataSnapshot snapshot = await FirebaseDatabase.instance.reference().child('threads').orderByChild('p/$currentUserId').equalTo(true).once();
 
-    for(var key in snapshot.value.keys){
-      dynamic value = snapshot.value[key];
-
-      if(value['p'].length == participantMap.length){
-        if(participantMap.keys.toSet().containsAll(value['p'].keys.toSet())){
-          ThreadModel t = MessageService.instance.threads.singleWhere((element) => element.threadID == key);
-          return t;
+    if (snapshot.value != null) {
+      for(var key in snapshot.value.keys){
+        dynamic value = snapshot.value[key];
+      
+        if(value['p'].length == participantMap.length){
+          if(participantMap.keys.toSet().containsAll(value['p'].keys.toSet())){
+            ThreadModel t = MessageService.instance.threads.singleWhere((element) => element.threadID == key);
+            return t;
+          }
         }
       }
     }
