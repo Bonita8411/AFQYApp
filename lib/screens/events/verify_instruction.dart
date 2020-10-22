@@ -11,7 +11,7 @@ class _VerifyInstruction extends State<VerifyInstruction> {
     return AlertDialog(
       title: new Text("Did you just purchase a ticket?"),
       content: new Text(
-          "\nStep 1: Go to Who's Going Tab \n\nStep 2: Click on Verify Ticket button \n\nStep 3: Scan the QR code on your ticket \n\nStep 4: You can edit your interests after verifying your ticket "),
+          "\nStep 1: Go to the \"Who's Going\" Tab. \n\nStep 2: Tap on the \"Verify Ticket\" button. \n\nStep 3: Open the ticket in your email and either scan the QR code on your ticket or enter the 23 digit ticket number.\n\nStep 4: You can edit your interests after verifying your ticket."),
       actions: <Widget>[
         new FlatButton(
           child: new Text("Close"),

@@ -194,7 +194,12 @@ class _ThreadScreenState extends State<ThreadScreen> {
               itemBuilder: (context, index){
                     MessageModel message = thread.messages[index];
                     bool fromCurrent = MessageService.instance.currentUserId == message.senderID;
-                    UserProfile user = thread.participants.singleWhere((element) => element.uid == message.senderID);
+                    UserProfile user;
+                    try{
+                      user = thread.participants.singleWhere((element) => element.uid == message.senderID);
+                    }catch(e){
+                      user = new UserProfile(null, "This user left", null, null);
+                    }
                     return Align(
                       alignment: fromCurrent ? Alignment.centerRight : Alignment.centerLeft,
                       child: FractionallySizedBox(
@@ -223,21 +228,25 @@ class _ThreadScreenState extends State<ThreadScreen> {
                                     ),
                                     items: [
                                       PopupMenuItem<MessageModel>(
-                                          child: const Text('Report Message'), value: message),
+                                          child: const Text('Red Card Message'), value: message),
                                     ],
                                   ).then((value) {
-                                    _showReportDialog().then((reason) {
-                                      thread.reportMessage(message, reason)
-                                          .then((value) {
-                                        Scaffold.of(context).showSnackBar(SnackBar(
-                                            content: Text('Your report has been sent.')
-                                        ));
-                                      }).catchError((error) {
-                                        Scaffold.of(context).showSnackBar(SnackBar(
-                                          content: Text('Failed to send report.'),
-                                        ));
-                                      });
+                                    if(value is MessageModel){
+                                      _showReportDialog().then((reason) {
+                                      if(reason != null){
+                                        thread.reportMessage(message, reason)
+                                            .then((value) {
+                                          Scaffold.of(context).showSnackBar(SnackBar(
+                                              content: Text('Your report has been sent.')
+                                          ));
+                                        }).catchError((error) {
+                                          Scaffold.of(context).showSnackBar(SnackBar(
+                                            content: Text('Failed to send report.'),
+                                          ));
+                                        });
+                                      }
                                     });
+                                    }
                                   });
                                 },
                                 child: ListTile(

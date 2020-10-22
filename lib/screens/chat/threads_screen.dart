@@ -14,6 +14,7 @@ class ThreadsScreen extends StatefulWidget {
 }
 
 class _ThreadsScreenState extends State<ThreadsScreen> {
+  bool loaded = false;
   @override
   void initState() {
     super.initState();
@@ -36,10 +37,11 @@ class _ThreadsScreenState extends State<ThreadsScreen> {
     //Sort threads by newest first
     threads.sort((a, b) => b.lastMessageTimestamp != null ? b.lastMessageTimestamp.compareTo(a.lastMessageTimestamp) : -1);
 
-    if(threads.length == 0) {
-      Future.delayed(Duration(seconds: 3)).then((value) => setState((){}));
+    if(threads.length == 0 && !loaded) {
+      Future.delayed(Duration(seconds: 3)).then((value) => setState((){loaded=true;}));
       return Center(child: CircularProgressIndicator());
     } else {
+      loaded = true;
       return Scaffold(
           floatingActionButton: FloatingActionButton.extended(
             icon: Icon(Icons.edit),
@@ -55,7 +57,7 @@ class _ThreadsScreenState extends State<ThreadsScreen> {
               });
             },
           ),
-          body: ListView.builder(
+          body: threads.length == 0 ? Center(child: Text('You do not have any messages.')) : ListView.builder(
               itemCount: threads.length,
               itemBuilder: (context, index) {
                 ThreadModel thread = threads[index];
