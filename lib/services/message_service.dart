@@ -57,7 +57,7 @@ class MessageService {
       for(var key in snapshot.value.keys){
         dynamic value = snapshot.value[key];
       
-        if(value['p'].length == participantMap.length){
+        if(value['p'].length == participantMap.length && value['p'].length > 1){
           if(participantMap.keys.toSet().containsAll(value['p'].keys.toSet())){
             ThreadModel t = MessageService.instance.threads.singleWhere((element) => element.threadID == key);
             return t;
