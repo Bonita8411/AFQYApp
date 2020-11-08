@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>162775728897-7307n4bolpob5a29qi4kv57scnl0c4hp.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.162775728897-7307n4bolpob5a29qi4kv57scnl0c4hp</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDnfF98-ox5v6JvE9ukc2Ya1DbE_fdNKuc</string>
+	<key>GCM_SENDER_ID</key>
+	<string>162775728897</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>nz.afewquietyarns.afqyapp</string>
+	<key>PROJECT_ID</key>
+	<string>afqy-app</string>
+	<key>STORAGE_BUCKET</key>
+	<string>afqy-app.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:162775728897:ios:cef9bb10d53a505a92d100</string>
+	<key>DATABASE_URL</key>
+	<string>https://afqy-app.firebaseio.com</string>
+</dict>
+</plist>
